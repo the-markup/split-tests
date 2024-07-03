@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# See also: https://developer.wordpress.org/advanced-administration/debug/debug-wordpress/
+
+touch /var/log/wordpress.debug.log
+chown www-data:www-data /var/log/wordpress.debug.log

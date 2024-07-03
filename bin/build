@@ -1,0 +1,21 @@
+#!/bin/bash
+
+set -e
+
+echo "Building and then starting containers..."
+echo
+docker compose build
+docker compose up -d
+echo
+
+# echo "Installing node.js dependencies and building front-end assets..."
+# echo
+# npm install
+# npm run build
+# echo
+
+echo "Shutting off containers..."
+echo
+docker compose stop
+echo
+echo "All done!"
