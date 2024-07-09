@@ -34,5 +34,5 @@ TK
 
 ## Changelog ##
 
-### 0.1.0 ###
+### 0.0.1 ###
 Split tests for post titles
