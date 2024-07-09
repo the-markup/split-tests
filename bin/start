@@ -1,26 +1,33 @@
 #!/bin/bash
 
-set -e
+set -o errexit
+set -o pipefail
+set -o nounset
 
 stop_containers() {
-  echo "Shutting off containers..."
+  echo "Shutting off containers ..."
   echo
-  docker-compose stop
+  docker compose stop
   echo
   echo "All done!"
 }
 
 trap stop_containers SIGINT
 
-echo "Starting containers..."
+echo "Starting containers ..."
 echo
-docker-compose up -d
+docker compose up -d
 echo
 
-# echo "Running npm install..."
-# echo
-# npm install
-# echo
+echo "Running composer update ..."
+echo
+docker compose exec web composer --working-dir="/var/www/html/wp-content/plugins/split-tests" update
+echo
 
-# echo "Starting webpack..."
-# npm run start
+echo "Running npm install ..."
+echo
+npm install
+echo
+
+echo "Starting webpack ..."
+npm run start

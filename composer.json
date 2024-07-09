@@ -1,0 +1,32 @@
+{
+  "name": "themarkup/split-tests",
+  "description": "Simple A/B testing for WordPress",
+  "version": "0.0.1",
+  "type": "wordpress-plugin",
+  "repositories": [
+    {
+        "type": "composer",
+        "url": "https://connect.advancedcustomfields.com"
+    }
+  ],
+  "require": {
+    "wpengine/advanced-custom-fields-pro": "^6.0"
+  },
+  "extra": {
+    "installer-paths": {
+      "../{$name}/": [
+        "type:wordpress-plugin"
+      ]
+    }
+  },
+  "autoload": {
+		"psr-4": {
+			"SplitTests\\": "src/"
+		}
+	},
+  "config": {
+    "allow-plugins": {
+      "composer/installers": true
+    }
+  }
+}

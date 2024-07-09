@@ -9,7 +9,7 @@ RUN apt update && apt install -y \
     emacs-nox;
 
 # Setup
-ADD ./setup /setup
+ADD ./setup/web /setup
 RUN /setup/wp-cli
 RUN /setup/composer
 RUN /setup/debug-log

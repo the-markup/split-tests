@@ -1,6 +1,8 @@
 #!/bin/bash
 
-set -e
+set -o errexit
+set -o pipefail
+set -o nounset
 
 echo "Building and then starting containers..."
 echo
@@ -8,11 +10,16 @@ docker compose build
 docker compose up -d
 echo
 
-# echo "Installing node.js dependencies and building front-end assets..."
-# echo
-# npm install
-# npm run build
-# echo
+echo "Running composer install ..."
+echo
+docker compose exec web composer --working-dir="/var/www/html/wp-content/plugins/split-tests" install
+echo
+
+echo "Installing node.js dependencies and building front-end assets..."
+echo
+npm install
+npm run build
+echo
 
 echo "Shutting off containers..."
 echo
