@@ -38,6 +38,9 @@ class Plugin {
         // This filter is ours, for adjusting individual posts with a variant
         add_filter('split_tests_post_variant', [$this, 'post_variant']);
 
+        // Init hook
+        add_action('init', [$this, 'init']);
+        
         // Incoming page request
         add_filter('request', [$this, 'request']);
 
@@ -52,7 +55,25 @@ class Plugin {
     }
 
     /**
-     * Handle 'request' hook.
+     * Handle 'init' action.
+     *
+     * @return void
+     */
+    function init() {
+        register_post_type('split_test', [
+            'label' => 'Split Tests',
+            'labels' => $this->post_type_labels([
+                'name' => 'Split Tests',
+                'singular_name' => 'Split Test'
+            ]),
+            'description' => 'A/B test resuls',
+            'show_ui' => true,
+            'supports' => ['title']
+        ]);
+    }
+
+    /**
+     * Handle 'request' filter.
      *
      * @return array
      */
@@ -64,7 +85,7 @@ class Plugin {
     }
 
     /**
-     * Handle 'posts_results' hook from WP_Query.
+     * Handle 'posts_results' filter from WP_Query.
      *
      * @return array
      */
@@ -110,10 +131,14 @@ class Plugin {
      *
      * @return array
      */
-    function get_variant($post, $url_slug = null) {
+    function get_variant($post) {
         // Check if we already chose a variant for this post.
         if (! empty($this->chosen_variants[$post->ID])) {
             return $this->chosen_variants[$post->ID];
+        }
+
+        if (is_single()) {
+            return null;
         }
 
         // Query for any variants on this post.
@@ -141,6 +166,10 @@ class Plugin {
 	 * @return string
 	 */
     function pre_post_link($permalink, $post) {
+        // Don't adjust links in the admin dashboard.
+        if (is_admin()) {
+            return $permalink;
+        }
         $post = apply_filters('split_tests_post_variant', $post);
         return $permalink;
     }
@@ -186,5 +215,51 @@ class Plugin {
     function load_acf_json($paths) {
         $paths[] = dirname(__DIR__) . '/acf-fields';
         return $paths;
+    }
+
+    /**
+     * Assigns reasonable labels for custom post types.
+     *
+     * @return array
+     */
+    function post_type_labels($labels) {
+        $label_templates = [
+            'add_new' => 'Add New %singular_name%',
+            'add_new_item' => 'Add New %singular_name%',
+            'edit_item' => 'Edit %singular_name%',
+            'new_item' => 'New %singular_name%',
+            'view_item' => 'View %singular_name%',
+            'view_items' => 'View %name%',
+            'search_items' => 'Search %name%',
+            'not_found' => 'No %name% found',
+            'not_found_in_trash' => 'No %name found in trash',
+            'parent_item_colon' => 'Parent %singular_name%:',
+            'all_items' => 'All %name%',
+            'archives' => '%singular_name% Archives',
+            'attributes' => '%singular_name% Attributes',
+            'insert_into_item' => 'Insert into %singular_name%',
+            'uploaded_to_this_item' => 'Uploaded to this %singular_name%',
+            'filter_items_list' => 'Filter %name% list',
+            'items_list_navigation' => '%name% list navigation',
+            'items_list' => '%name% list',
+            'item_published' => '%singular_name% published.',
+            'item_published_privately' => '%singular_name% published privately.',
+            'item_reverted_to_draft' => '%singular_name% reverted to draft.',
+            'item_trashed' => '%singular_name% trashed.',
+            'item_scheduled' => '%singular_name% scheduled.',
+            'item_updated' => '%singular_name% updated.',
+            'item_link' => '%singular_name% Link',
+            'item_link_description' => 'A link to a %singular_name%'
+        ];
+
+        foreach ($label_templates as $name => $value) {
+            if (isset($labels[$name])) {
+                continue;
+            }
+            $value = str_replace('%name%', $labels['name'], $value);
+            $value = str_replace('%singular_name%', $labels['singular_name'], $value);
+            $labels[$name] = $value;
+        }
+        return $labels;
     }
 }
