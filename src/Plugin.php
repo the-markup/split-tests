@@ -95,6 +95,9 @@ class Plugin {
 
         // Add split_test posts whenever you save a post with a split test
         add_action('save_post', [$this, 'save_post'], 10, 2);
+
+        // Show test results on split_test edit page
+        add_action('edit_form_after_title', [$this, 'edit_form_after_title']);
         
         // ACF JSON path
         add_filter('acf/settings/load_json', [$this, 'load_acf_json']);
@@ -342,6 +345,35 @@ class Plugin {
     }
 
     /**
+     * Retrieve the number of "boops" for a given variant statistic.
+     *
+     * @return void
+     */
+    function get_boop_count($split_test_id, $test_type, $variant_index, $boop_type) {
+        global $wpdb;
+        $now = wp_date('Y-m-d H:i:s');
+        return $wpdb->get_var($wpdb->prepare("
+            SELECT COUNT(split_test_id)
+            FROM {$wpdb->prefix}split_tests
+            WHERE split_test_id = %d
+              AND test_type = %s
+              AND variant_index = %d
+              AND test_or_convert = %s
+        ", $split_test_id, $test_type, $variant_index, $boop_type));
+    }
+
+    /**
+     * Retrieve the variant permalink for a given split test ID and index.
+     *
+     * @return string
+     */
+    function get_variant_permalink($split_test_id, $url_slug) {
+        $target_post_id = get_post_meta($split_test_id, 'target_post_id', true);
+        $link_template = get_the_permalink($target_post_id, true);
+        return str_replace('%postname%', $url_slug, $link_template);
+    }
+
+    /**
      * "Boop" the 'test' variable for a given target post ID.
      *
      * @return void
@@ -365,6 +397,68 @@ class Plugin {
             return;
         }
         $this->boop_split_test($split_test_id, $test_type, $variant_index, 'convert');
+    }
+
+    /**
+     * Show test results on the split_test post editor page.
+     *
+     * @return void
+     */
+    function edit_form_after_title($post) {
+        if ($post->post_type != 'split_test') {
+            return;
+        }
+
+        $target_id = get_post_meta($post->ID, 'target_post_id', true);
+        $target_post = get_post($target_id);
+        $_variants = get_field('title_variants', $target_id);
+
+        if (empty($_variants)) {
+            echo "Error: No variants found.";
+            return;
+        }
+
+        $variants = [
+            [
+                'name' => 'Default',
+                'headline' => $target_post->post_title,
+                'url_slug' => $target_post->post_name,
+            ],
+            ... $_variants
+        ];
+
+        ?>
+        <table class="variant-test-results">
+            <tr>
+                <th>Variant</th>
+                <th>Headline</th>
+                <th>Tests</th>
+                <th>Conversions</th>
+                <th>Rate</th>
+            </tr>
+            <?php foreach ($variants as $index => $variant) {
+
+                $num_tests = intval($this->get_boop_count($post->ID, 'title', $index, 'test'));
+                $num_converts = intval($this->get_boop_count($post->ID, 'title', $index, 'convert'));
+                if ($num_tests > 0) {
+                    $rate = number_format($num_converts / $num_tests * 100, 1) . '%';
+                } else {
+                    $rate = '&mdash;';
+                }
+
+                $variant_link = $this->get_variant_permalink($post->ID, $variant['url_slug']);
+
+                ?>
+                <tr>
+                    <td><?php echo $variant['name']; ?></td>
+                    <td><a href="<?php echo $variant_link; ?>"><?php echo $variant['headline']; ?></a></td>
+                    <td><?php echo $num_tests; ?></td>
+                    <td><?php echo $num_converts; ?></td>
+                    <td><?php echo $rate; ?></td>
+                </tr>
+            <?php } ?>
+        </table>
+        <?php
     }
 
     /**
