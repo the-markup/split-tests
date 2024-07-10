@@ -37,7 +37,8 @@ class Plugin {
     protected $converted = false;
 
     /**
-     * Avoid double-applying the variant post filter.
+     * A flag for turning off the 'posts_results' filter, to avoid
+     * double-filtering.
      *
      * @var bool
      */
@@ -152,7 +153,7 @@ class Plugin {
 
         // Found a non-existant slug? Let's check for variant 'url_slug'
         // postmeta values.
-        if (empty($posts) && !empty($this->request_slug)) {
+        if (is_single() && empty($posts) && !empty($this->request_slug)) {
             $request_slug = $this->request_slug;
             $this->request_slug = '';
             // We may now have a single post that matches the requested slug.
@@ -258,7 +259,9 @@ class Plugin {
      */
     function check_variant_url_slugs($request_slug, $query) {
         global $wpdb;
-		$post_ids = $wpdb->get_col($wpdb->prepare("
+
+        // Look up variant URL slugs that match the unknown request slug
+        $post_ids = $wpdb->get_col($wpdb->prepare("
 			SELECT post_id
 			FROM $wpdb->postmeta
 			WHERE meta_key LIKE 'title_variants_%_url_slug'
@@ -268,14 +271,17 @@ class Plugin {
 			return [];
 		}
 
+        // Replace the 'name' query with a list of IDs that have a variant slug
         $query_vars = $query->query_vars;
         unset($query_vars['name']);
         $query_vars['post__in'] = $post_ids;
+
+        // We don't want this lookup query to be modified by the 'posts_results' filter
         $this->ignore_post_variants = true;
         $posts = get_posts($query_vars);
         $this->ignore_post_variants = false;
 
-        if (is_single() && count($posts) == 1) {
+        if (count($posts) == 1) {
             $variants = get_field('title_variants', $posts[0]->ID);
             foreach ($variants as $index => $variant) {
                 if ($variant['url_slug'] == $request_slug) {
