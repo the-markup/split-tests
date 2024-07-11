@@ -304,10 +304,10 @@ class TitleTests {
      */
     function admin_print_scripts() {
         global $post;
-        if ($post && $post->post_type != 'split_test') {
+        if (!$post || $post->post_type != 'split_test') {
             return;
         }
-        $target_post_id = get_post_meta($post->ID, 'target_post_id', true);
+        $target_post_id = get_post_meta($post->ID, 'target_post_id', true) ?: 'null';
         echo <<<END
 <script>
 // Added for post title split tests
@@ -359,7 +359,6 @@ END;
         $_variants = get_field('title_variants', $target_id);
 
         if (empty($_variants)) {
-            echo "Error: No variants found.";
             return;
         }
 

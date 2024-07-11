@@ -20,6 +20,9 @@ jQuery(document).ready(async $ => {
     if (targetPostId) {
         $('.title-test-details').attr('href', `/wp-admin/post.php?post=${targetPostId}&action=edit#acf-group_668d4e50066d3`);
         $('.title-test-details').addClass('button-primary');
+    } else {
+        $('.title-test-details').hide();
+        $('.title-test-details').after('<p>Post Title Split Tests can be created by editing Posts directly.</p><p>Look for "Split Tests: Title" below the content editor.</p>');
     }
 
 });
