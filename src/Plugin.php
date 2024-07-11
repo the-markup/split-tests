@@ -184,7 +184,7 @@ class Plugin {
         wp_enqueue_script(
             'split-tests',
             plugins_url('build/index.js', __DIR__),
-            ['acf-input', 'jquery', 'wp-url'],
+            ['acf-input', 'jquery', 'wp-url', 'wp-data'],
             $asset['version']
         );
         wp_enqueue_style(

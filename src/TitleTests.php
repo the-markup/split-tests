@@ -80,6 +80,9 @@ class TitleTests {
 
         // Add split_test posts whenever you save a post with a split test
         add_action('save_post', [$this, 'save_post'], 10, 2);
+
+        // Add some JS for Split Test post editor
+        add_action('admin_print_scripts', [$this, 'admin_print_scripts']);
     }
 
     /**
@@ -292,6 +295,25 @@ class TitleTests {
                 }
             }
         }
+    }
+
+    /**
+     * Adds some JS for Split Test post types specific to title tests.
+     *
+     * @return void
+     */
+    function admin_print_scripts() {
+        global $post;
+        if ($post->post_type != 'split_test') {
+            return;
+        }
+        $target_post_id = get_post_meta($post->ID, 'target_post_id', true);
+        echo <<<END
+<script>
+// Added for title test split tests
+const targetPostId = $target_post_id;
+</script>
+END;
     }
 
     /**
