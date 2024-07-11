@@ -55,6 +55,9 @@ class Plugin {
 
         // Enqueue admin assets
         add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
+
+        // Expose API endpoint
+        add_action('rest_api_init', [$this, 'rest_api_init']);
         
         // ACF JSON path
         add_filter('acf/settings/load_json', [$this, 'load_acf_json']);
@@ -91,12 +94,54 @@ class Plugin {
     }
 
     /**
-     * Record a variant statistic ('test' or 'convert') event for a given
-     * split test post ID.
+     * Set up a front-end REST API increment call.
      *
      * @return void
      */
-    function increment($test_or_convert, $split_test_id, $test_type, $variant_index) {
+    function increment($test_or_convert, $split_test_id, $variant_index) {
+        add_action('wp_print_scripts', function() use ($test_or_convert, $split_test_id, $variant_index) {
+            echo <<<END
+<script>
+fetch('/wp-json/split-tests/v1/increment', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    },
+    body: new URLSearchParams({
+        test_or_convert: '$test_or_convert',
+        split_test_id: $split_test_id,
+        variant_index: $variant_index
+    }),
+});
+</script>
+
+END;
+        });
+    }
+
+    /**
+     * Handle incoming 'increment' API request.
+     *
+     * @return array
+     */
+    function rest_api_increment($request) {
+        $test_or_convert = $request->get_param('test_or_convert');
+        $split_test_id = $request->get_param('split_test_id');
+        $variant_index = $request->get_param('variant_index');
+        $test_type = get_field('test_type', $split_test_id);
+        $this->insert_split_test_record($test_or_convert, $split_test_id, $test_type, $variant_index);
+        return [
+            'ok' => true
+        ];
+    }
+
+    /**
+     * Record a variant statistic ('test' or 'convert') event for a given
+     * split test post ID in the 'wp_split_tests' table.
+     *
+     * @return void
+     */
+    function insert_split_test_record($test_or_convert, $split_test_id, $test_type, $variant_index) {
         global $wpdb;
         $now = wp_date('Y-m-d H:i:s');
         $wpdb->query($wpdb->prepare("
@@ -193,6 +238,19 @@ class Plugin {
             [],
             $asset['version']
         );
+    }
+
+    /**
+     * Setup API ednpoint.
+     *
+     * @return void
+     */
+    function rest_api_init() {
+        $worked = register_rest_route('split-tests/v1', 'increment', [
+              'methods' => 'POST',
+              'callback' => [$this, 'rest_api_increment'],
+              'permission_callback' => '__return_true',
+        ]);
     }
 
     /**
