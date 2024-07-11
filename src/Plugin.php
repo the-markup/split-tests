@@ -99,6 +99,9 @@ class Plugin {
 
         // Show test results on split_test edit page
         add_action('edit_form_after_title', [$this, 'edit_form_after_title']);
+
+        // Enqueue admin assets
+        add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
         
         // ACF JSON path
         add_filter('acf/settings/load_json', [$this, 'load_acf_json']);
@@ -498,6 +501,27 @@ class Plugin {
     function load_acf_json($paths) {
         $paths[] = dirname(__DIR__) . '/acf-fields';
         return $paths;
+    }
+
+    /**
+     * Enqueue assets for the Split Tests edit page.
+     *
+     * @return void
+     */
+    function admin_enqueue_scripts() {
+        $asset = include(dirname(__DIR__) . '/build/index.asset.php');
+        wp_enqueue_script(
+            'split-tests',
+            plugins_url('build/index.js', __DIR__),
+            ['acf-input', 'jquery', 'wp-url'],
+            $asset['version']
+        );
+        wp_enqueue_style(
+            'split-tests',
+            plugins_url('build/index.css', __DIR__),
+            [],
+            $asset['version']
+        );
     }
 
     /**

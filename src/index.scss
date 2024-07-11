@@ -1,0 +1,14 @@
+.variant-test-results {
+    width: 100%;
+    font-size: 16px;
+    margin-top: 15px;
+
+    th {
+        text-align: left;
+    }
+
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #dedede;
+    }
+}
