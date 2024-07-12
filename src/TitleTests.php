@@ -337,6 +337,7 @@ END;
         if (!$split_test_id) {
             return;
         }
+        $split_test_id = intval($split_test_id);
         $this->plugin->increment('test', $split_test_id, $variant_index);
     }
 
@@ -350,6 +351,7 @@ END;
         if (!$split_test_id) {
             return;
         }
+        $split_test_id = intval($split_test_id);
         $this->plugin->increment('convert', $split_test_id, $variant_index);
     }
 
