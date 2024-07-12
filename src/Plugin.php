@@ -68,7 +68,13 @@ class Plugin {
 
         // Expose API endpoint
         add_action('rest_api_init', [$this, 'rest_api_init']);
-        
+
+        // Add results column header to Split Tests table
+        add_filter('manage_split_test_posts_columns', [$this, 'manage_split_test_posts_columns']);
+
+        // Add results column values to Split Tests table
+        add_filter('manage_split_test_posts_custom_column', [$this, 'manage_split_test_posts_custom_column'], 10, 2);
+
         // ACF JSON path
         add_filter('acf/settings/load_json', [$this, 'load_acf_json']);
     }
@@ -301,6 +307,64 @@ END;
               'callback' => [$this, 'rest_api_events'],
               'permission_callback' => '__return_true',
         ]);
+    }
+
+    /**
+     * Add a Results column header to the Split Tests posts table.
+     *
+     * @return array
+     */
+    function manage_split_test_posts_columns($_columns) {
+        $columns = [];
+        foreach ($_columns as $key => $value) {
+            $columns[$key] = $value;
+            if ($key == 'title') {
+                $columns['conversions'] = 'Conversions';
+            }
+        }
+        return $columns;
+    }
+
+    /**
+     * Add Results column values to the Split Tests posts table.
+     *
+     * @return array
+     */
+    function manage_split_test_posts_custom_column($column, $post_id) {
+        if ($column != 'conversions') {
+            return;
+        }
+        $type = get_field('test_type', $post_id);
+        if ($type == 'title') {
+            $target_id = get_post_meta($post_id, 'target_post_id', true);
+            $_variants = get_field('title_variants', $target_id);
+            $variants = [
+                ['name' => 'Default'],
+                ... $_variants
+            ];
+            $results = [];
+            $top_rate = 0;
+            foreach ($variants as $index => $variant) {
+                $num_tests = intval($this->get_count($post_id, 'title', $index, 'test'));
+                $num_converts = intval($this->get_count($post_id, 'title', $index, 'convert'));
+                if ($num_tests > 0) {
+                    $rate = $num_converts / $num_tests * 100;
+                    if ($rate > $top_rate) {
+                        $top_rate = $rate;
+                        $top_index = $index;
+                    }
+                    $rate_str = number_format($rate, 1) . '%';
+                } else {
+                    $rate = 0;
+                    $rate_str = '&mdash;';
+                }
+                $results[] = "$rate_str {$variant['name']}";
+            }
+            if (isset($top_index)) {
+                $results[$top_index] = "<strong class=\"split-tests-winner\">$results[$top_index]</strong>";
+            }
+            echo implode("<br>\n", $results);
+        }
     }
 
     /**

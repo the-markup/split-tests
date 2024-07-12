@@ -12,3 +12,14 @@
         border-bottom: 1px solid #dedede;
     }
 }
+
+.split-tests-winner {
+    position: relative;
+}
+
+.split-tests-winner::before {
+    content: "🏆";
+    position: absolute;
+    left: -20px;
+    top: -1px;
+}
