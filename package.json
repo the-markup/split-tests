@@ -4,8 +4,8 @@
   "main": "Gruntfile.js",
   "author": "The Markup <info@themarkup.org>",
   "scripts": {
-    "start": "wp-scripts start",
-    "build": "wp-scripts build",
+    "start": "wp-scripts start src/split-tests.js src/admin.js",
+    "build": "wp-scripts build src/split-tests.js src/admin.js",
     "grunt": "grunt default"
   },
   "devDependencies": {

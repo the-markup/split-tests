@@ -1,7 +1,7 @@
 import { cleanForSlug } from '@wordpress/url';
 import { useSelect } from '@wordpress/data';
 
-import "./index.scss";
+import "./admin.scss";
 
 jQuery(document).ready(async $ => {
     if (typeof acf === 'undefined') {

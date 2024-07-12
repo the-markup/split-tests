@@ -20,6 +20,13 @@ class Plugin {
      */
     protected $db_version = 1;
 
+    /**
+     * A list of variant test/convert events to synchronize upon the page loading.
+     *
+     * @var array
+     */
+    protected $increment_events;
+
 	/**
 	 * Setup the database table, hooks, and tests.
 	 *
@@ -52,6 +59,9 @@ class Plugin {
     function setup_hooks() {
         // Show test results on split_test edit page
         add_action('edit_form_after_title', [$this, 'edit_form_after_title']);
+
+        // Enqueue front-end JS
+        add_action('wp_enqueue_scripts', [$this, 'wp_enqueue_scripts']);
 
         // Enqueue admin assets
         add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
@@ -99,24 +109,7 @@ class Plugin {
      * @return void
      */
     function increment($test_or_convert, $split_test_id, $variant_index) {
-        add_action('wp_print_scripts', function() use ($test_or_convert, $split_test_id, $variant_index) {
-            echo <<<END
-<script>
-fetch('/wp-json/split-tests/v1/increment', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    body: new URLSearchParams({
-        test_or_convert: '$test_or_convert',
-        split_test_id: $split_test_id,
-        variant_index: $variant_index
-    }),
-});
-</script>
-
-END;
-        });
+        $this->increment_events[] = [$test_or_convert, $split_test_id, $variant_index];
     }
 
     /**
@@ -124,14 +117,24 @@ END;
      *
      * @return array
      */
-    function rest_api_increment($request) {
-        $test_or_convert = $request->get_param('test_or_convert');
-        $split_test_id = $request->get_param('split_test_id');
-        $variant_index = $request->get_param('variant_index');
-        $test_type = get_field('test_type', $split_test_id);
-        $this->insert_split_test_record($test_or_convert, $split_test_id, $test_type, $variant_index);
+    function rest_api_events($request) {
+        $ok_rsp = true;
+        try {
+            $events = json_decode($request->get_body());
+            foreach ($events as $event) {
+                if (count($event) != 3) {
+                    continue;
+                }
+                list($test_or_convert, $split_test_id, $variant_index) = $event;
+                $test_type = get_field('test_type', $split_test_id);
+                $this->insert_split_test_event($test_or_convert, $split_test_id, $test_type, $variant_index);
+            }
+        } catch(Exception $err) {
+            $ok_rsp = false;
+            error_log($err);
+        }
         return [
-            'ok' => true
+            'ok' => $ok_rsp
         ];
     }
 
@@ -141,7 +144,7 @@ END;
      *
      * @return void
      */
-    function insert_split_test_record($test_or_convert, $split_test_id, $test_type, $variant_index) {
+    function insert_split_test_event($test_or_convert, $split_test_id, $test_type, $variant_index) {
         global $wpdb;
         $now = wp_date('Y-m-d H:i:s');
         $wpdb->query($wpdb->prepare("
@@ -220,35 +223,78 @@ END;
     }
 
     /**
+     * Enqueue JavaScript for the front-end.
+     *
+     * @return void
+     */
+    function wp_enqueue_scripts() {
+        $asset = include(dirname(__DIR__) . '/build/split-tests.asset.php');
+        wp_register_script(
+            'split-tests',
+            plugins_url('build/split-tests.js', __DIR__),
+            $asset['dependencies'],
+            $asset['version']
+        );
+
+        if (!empty($this->increment_events)) {
+            wp_localize_script('split-tests', 'split_tests_events', $this->increment_events);
+            wp_enqueue_script('split-tests');
+        }
+    }
+
+    /**
+     * Synchronize any increment events.
+     *
+     * @return void
+     */
+    function wp_print_scripts() {
+        if (is_admin()) {
+            return;
+        }
+        if (! empty($this->increment_events)) {
+            $events = json_encode($this->increment_events);
+            echo <<<END
+<script>
+split_test_syn($events);
+</script>
+END;
+        }
+    }
+
+    /**
+     * 
+     */
+
+    /**
      * Enqueue assets for the Split Tests edit page.
      *
      * @return void
      */
     function admin_enqueue_scripts() {
-        $asset = include(dirname(__DIR__) . '/build/index.asset.php');
+        $asset = include(dirname(__DIR__) . '/build/admin.asset.php');
         wp_enqueue_script(
-            'split-tests',
-            plugins_url('build/index.js', __DIR__),
-            ['acf-input', 'jquery', 'wp-url', 'wp-data'],
+            'split-tests-admin',
+            plugins_url('build/admin.js', __DIR__),
+            ['acf-input', 'jquery', 'wp-url'],
             $asset['version']
         );
         wp_enqueue_style(
-            'split-tests',
-            plugins_url('build/index.css', __DIR__),
+            'split-tests-admin',
+            plugins_url('build/admin.css', __DIR__),
             [],
             $asset['version']
         );
     }
 
     /**
-     * Setup API ednpoint.
+     * Setup API endpoint.
      *
      * @return void
      */
     function rest_api_init() {
-        $worked = register_rest_route('split-tests/v1', 'increment', [
+        $worked = register_rest_route('split-tests/v1', 'events', [
               'methods' => 'POST',
-              'callback' => [$this, 'rest_api_increment'],
+              'callback' => [$this, 'rest_api_events'],
               'permission_callback' => '__return_true',
         ]);
     }
