@@ -3,20 +3,27 @@ window.addEventListener('load', () => {
         return;
     }
 
-    if (split_tests.events && split_tests.events.length > 0) {
-        fetch(`/wp-json/split-tests/v1/events?_wpnonce=${split_tests.nonce}`, {
+    function postEvents(events) {
+        if (!events || events.length < 1) {
+            return;
+        }
+        return fetch(`/wp-json/split-tests/v1/events?_wpnonce=${split_tests.nonce}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(split_tests.events)
+            body: JSON.stringify(events)
         });
-        split_tests.events = [];
+    }
+
+    if (split_tests.onload) {
+        postEvents(split_tests.onload);
     }
 
     if (split_tests.dom) {
         for (let id in split_tests.dom) {
             const variant = split_tests.dom[id];
+            postEvents([["test", parseInt(id), variant.index]]);
 
             if (variant.noop) {
                 continue;
@@ -44,13 +51,7 @@ window.addEventListener('load', () => {
                     }
                     target.addEventListener('click', async e => {
                         e.preventDefault();
-                        await fetch(`/wp-json/split-tests/v1/events?_wpnonce=${split_tests.nonce}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify([["convert", parseInt(id), variant.index]])
-                        });
+                        await postEvents([["convert", parseInt(id), variant.index]]);
                         window.location = e.target.getAttribute('href');
                     });
                 }

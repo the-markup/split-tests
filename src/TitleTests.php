@@ -355,6 +355,11 @@ END;
         $this->plugin->increment('convert', $split_test_id, $variant_index);
     }
 
+    /**
+     * Display the split test results.
+     *
+     * @return void
+     */
     function show_results($post) {
         $target_id = get_post_meta($post->ID, 'target_post_id', true);
         $target_post = get_post($target_id);
@@ -405,5 +410,41 @@ END;
             <?php } ?>
         </table>
         <?php
+    }
+
+    /**
+     * Show a brief summary of the results, for the split test table column.
+     *
+     * @return void
+     */
+    function show_results_summary($post_id) {
+        $target_id = get_post_meta($post_id, 'target_post_id', true);
+        $_variants = get_field('title_variants', $target_id);
+        $variants = [
+            ['name' => 'Default'],
+            ... $_variants
+        ];
+        $results = [];
+        $top_rate = 0;
+        foreach ($variants as $index => $variant) {
+            $num_tests = intval($this->plugin->get_count($post_id, 'title', $index, 'test'));
+            $num_converts = intval($this->plugin->get_count($post_id, 'title', $index, 'convert'));
+            if ($num_tests > 0) {
+                $rate = $num_converts / $num_tests * 100;
+                if ($rate > $top_rate) {
+                    $top_rate = $rate;
+                    $top_index = $index;
+                }
+                $rate_str = number_format($rate, 1) . '%';
+            } else {
+                $rate = 0;
+                $rate_str = '&mdash;';
+            }
+            $results[] = "$rate_str {$variant['name']}";
+        }
+        if (isset($top_index)) {
+            $results[$top_index] = "<strong class=\"split-tests-winner\">$results[$top_index]</strong>";
+        }
+        echo implode("<br>\n", $results);
     }
 }

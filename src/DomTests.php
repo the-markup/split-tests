@@ -86,11 +86,97 @@ class DOMTests {
             $variant['click_content'] = get_field('click_content', $post->ID);
         }
 
-        // Increment the 'test' variable for this variant.
-        // $this->plugin->increment('test', $post->ID, $index);
-
         return $variant;
     }
 
+    /**
+     * Display the split test results.
+     *
+     * @return void
+     */
+    function show_results($post) {
+        $_variants = get_field('dom_variants', $post->ID);
 
+        if (empty($_variants)) {
+            return;
+        }
+
+        foreach ($_variants as $index => $variant) {
+            $_variants[$index]['description'] = count($variant['content']) . ' content changes';
+        }
+
+        $variants = [
+            [
+                'name' => 'Default',
+                'description' => 'No content changes'
+            ],
+            ... $_variants
+        ];
+
+        ?>
+        <table class="variant-test-results">
+            <tr>
+                <th>Variant</th>
+                <th>Rate</th>
+                <th>Description</th>
+                <th>Tests</th>
+                <th>Conversions</th>
+            </tr>
+            <?php foreach ($variants as $index => $variant) {
+
+                $num_tests = intval($this->plugin->get_count($post->ID, 'dom', $index, 'test'));
+                $num_converts = intval($this->plugin->get_count($post->ID, 'dom', $index, 'convert'));
+                if ($num_tests > 0) {
+                    $rate = number_format($num_converts / $num_tests * 100, 1) . '%';
+                } else {
+                    $rate = '&mdash;';
+                }
+
+                ?>
+                <tr>
+                    <td><?php echo $variant['name']; ?></td>
+                    <td><?php echo $rate; ?></td>
+                    <td><?php echo $variant['description']; ?></a></td>
+                    <td><?php echo $num_tests; ?></td>
+                    <td><?php echo $num_converts; ?></td>
+                </tr>
+            <?php } ?>
+        </table>
+        <?php
+    }
+
+    /**
+     * Show a brief summary of the results, for the split test table column.
+     *
+     * @return void
+     */
+    function show_results_summary($post_id) {
+        $_variants = get_field('dom_variants', $post_id);
+        $variants = [
+            ['name' => 'Default'],
+            ... $_variants
+        ];
+        $results = [];
+        $top_rate = 0;
+        foreach ($variants as $index => $variant) {
+            $num_tests = intval($this->plugin->get_count($post_id, 'dom', $index, 'test'));
+            $num_converts = intval($this->plugin->get_count($post_id, 'dom', $index, 'convert'));
+            if ($num_tests > 0) {
+                $rate = $num_converts / $num_tests * 100;
+                if ($rate > $top_rate) {
+                    $top_rate = $rate;
+                    $top_index = $index;
+                }
+                $rate_str = number_format($rate, 1) . '%';
+            } else {
+                $rate = 0;
+                $rate_str = '&mdash;';
+            }
+            $results[] = "$rate_str {$variant['name']}";
+        }
+        if (isset($top_index)) {
+            $results[$top_index] = "<strong class=\"split-tests-winner\">$results[$top_index]</strong>";
+        }
+        echo implode("<br>\n", $results);
+    }
 }

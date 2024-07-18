@@ -197,6 +197,8 @@ class Plugin {
 
         if ($test_type == 'title') {
             $this->title_tests->show_results($post);
+        } else if ($test_type == 'dom') {
+            $this->dom_tests->show_results($post);
         }
     }
 
@@ -251,7 +253,7 @@ class Plugin {
             $nonce = wp_create_nonce('wp_rest');
             wp_localize_script('split-tests', 'split_tests', [
                 'nonce' => $nonce,
-                'events' => $this->increment_events,
+                'onload' => $this->increment_events,
                 'dom' => $this->dom_tests->get_variants()
             ]);
             wp_enqueue_script('split-tests');
@@ -338,34 +340,9 @@ END;
         }
         $type = get_field('test_type', $post_id);
         if ($type == 'title') {
-            $target_id = get_post_meta($post_id, 'target_post_id', true);
-            $_variants = get_field('title_variants', $target_id);
-            $variants = [
-                ['name' => 'Default'],
-                ... $_variants
-            ];
-            $results = [];
-            $top_rate = 0;
-            foreach ($variants as $index => $variant) {
-                $num_tests = intval($this->get_count($post_id, 'title', $index, 'test'));
-                $num_converts = intval($this->get_count($post_id, 'title', $index, 'convert'));
-                if ($num_tests > 0) {
-                    $rate = $num_converts / $num_tests * 100;
-                    if ($rate > $top_rate) {
-                        $top_rate = $rate;
-                        $top_index = $index;
-                    }
-                    $rate_str = number_format($rate, 1) . '%';
-                } else {
-                    $rate = 0;
-                    $rate_str = '&mdash;';
-                }
-                $results[] = "$rate_str {$variant['name']}";
-            }
-            if (isset($top_index)) {
-                $results[$top_index] = "<strong class=\"split-tests-winner\">$results[$top_index]</strong>";
-            }
-            echo implode("<br>\n", $results);
+            $this->title_tests->show_results_summary($post_id);
+        } else if ($type == 'dom') {
+            $this->dom_tests->show_results_summary($post_id);
         }
     }
 
