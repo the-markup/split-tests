@@ -17,7 +17,8 @@
                 "id": ""
             },
             "choices": {
-                "title": "Post Title Test"
+                "title": "Post Title Test",
+                "dom": "DOM Test"
             },
             "default_value": false,
             "return_format": "value",
@@ -52,6 +53,228 @@
             "message": "<a href=\"#replaced-by-js\" class=\"title-test-details button primary\">Edit Title Test<\/a>",
             "new_lines": "wpautop",
             "esc_html": 0
+        },
+        {
+            "key": "field_66982f55bb940",
+            "label": "DOM Variants",
+            "name": "dom_variants",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "pagination": 0,
+            "min": 0,
+            "max": 0,
+            "collapsed": "",
+            "button_label": "Add Variant",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_66982f84bb941",
+                    "label": "Name",
+                    "name": "name",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "Only displayed internally",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": "",
+                    "parent_repeater": "field_66982f55bb940"
+                },
+                {
+                    "key": "field_66982606ec8a1",
+                    "label": "Replace content",
+                    "name": "content",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": [
+                        [
+                            {
+                                "field": "field_668fec3b09224",
+                                "operator": "==",
+                                "value": "dom"
+                            }
+                        ]
+                    ],
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "layout": "block",
+                    "min": 0,
+                    "max": 0,
+                    "collapsed": "",
+                    "button_label": "Add Replacement",
+                    "rows_per_page": 20,
+                    "sub_fields": [
+                        {
+                            "key": "field_66982648ec8a2",
+                            "label": "Selector",
+                            "name": "selector",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_66982606ec8a1"
+                        },
+                        {
+                            "key": "field_66982b8dec8a3",
+                            "label": "Search",
+                            "name": "search",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Leave empty to replace all targets regardless of their text values.",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_66982606ec8a1"
+                        },
+                        {
+                            "key": "field_66982b9dec8a4",
+                            "label": "Replace",
+                            "name": "replace",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_66982606ec8a1"
+                        }
+                    ],
+                    "parent_repeater": "field_66982f55bb940"
+                }
+            ]
+        },
+        {
+            "key": "field_66992d001a992",
+            "label": "Conversion criterion",
+            "name": "conversion",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "page-load": "Page Load",
+                "click": "Click"
+            },
+            "default_value": false,
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
+            "key": "field_66992d2ea6e52",
+            "label": "Click target selector",
+            "name": "click_selector",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_66992d001a992",
+                        "operator": "==",
+                        "value": "click"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_66992d9e3a69e",
+            "label": "Click target content",
+            "name": "click_content",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_66992d001a992",
+                        "operator": "==",
+                        "value": "click"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
         }
     ],
     "location": [

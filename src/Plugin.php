@@ -107,6 +107,7 @@ class Plugin {
      */
     function setup_tests() {
         $this->title_tests = new TitleTests($this);
+        $this->dom_tests = new DOMTests($this);
     }
 
     /**
@@ -250,7 +251,8 @@ class Plugin {
             $nonce = wp_create_nonce('wp_rest');
             wp_localize_script('split-tests', 'split_tests', [
                 'nonce' => $nonce,
-                'events' => $this->increment_events
+                'events' => $this->increment_events,
+                'dom' => $this->dom_tests->get_variants()
             ]);
             wp_enqueue_script('split-tests');
         }

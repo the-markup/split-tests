@@ -34,6 +34,6 @@
 }
 
  add_action('plugins_loaded', function() {
-	global $split_tests_plugin;
-	$split_tests_plugin = new SplitTests\Plugin();
+    global $split_tests_plugin;
+    $split_tests_plugin = new SplitTests\Plugin();
 });

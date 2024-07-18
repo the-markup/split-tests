@@ -1,6 +1,6 @@
 <?php
 /**
- * Class TitleTest
+ * Class TitleTests
  *
  * @package   SplitTests
  * @author    The Markup
