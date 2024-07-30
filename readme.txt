@@ -5,7 +5,7 @@ Tags: split-tests
 Requires at least: 4.5
 Tested up to: 6.6
 Requires PHP: 5.6
-Stable tag: 0.0.2
+Stable tag: 0.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,3 +39,6 @@ Split tests for post titles
 
 = 0.0.2 =
 Split tests for DOM changes
+
+= 0.0.3 =
+Context for where tests run ('all', 'home', or a 'url' pattern)
