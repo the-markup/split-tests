@@ -111,6 +111,46 @@ class Plugin {
     }
 
     /**
+     * Check that a test context matches the current page request.
+     *
+     * @return bool
+     */
+    function check_context($test_id) {
+        $context = get_field('test_context', $test_id);
+        if ($context == 'all') {
+            return true;
+        } else if ($context == 'home') {
+            return is_front_page();
+        } else if ($context == 'url') {
+            return $this->check_context_url($test_id);
+        }
+    }
+
+    /**
+     * Check that a test's configured URL pattern matches the current page URL.
+     *
+     * @return bool
+     */
+    function check_context_url($test_id) {
+        $current_url = apply_filters('split_tests_current_url', $_SERVER['REQUEST_URI']);
+        $current_url = trailingslashit($current_url);
+        $current_url = strtolower($current_url);
+
+        $test_url = get_field('test_context_url', $test_id);
+        $test_url = strtolower($test_url);
+
+        if (strpos($test_url, '*') === false) {
+            $test_url = trailingslashit($test_url);
+            return $test_url === $current_url;
+        }
+
+        $test_pattern = str_replace('*', '.*', $test_url);
+	    $test_regex = '@^' . $test_pattern . '$@';
+
+        return preg_match($test_regex, $current_url);
+    }
+
+    /**
      * Set up a front-end REST API increment call.
      *
      * @return void

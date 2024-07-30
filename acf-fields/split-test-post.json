@@ -29,6 +29,61 @@
             "placeholder": ""
         },
         {
+            "key": "field_66a90a8e1ba36",
+            "label": "Test Context",
+            "name": "test_context",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "all": "All Pages",
+                "home": "Homepage",
+                "url": "URL pattern"
+            },
+            "default_value": false,
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": ""
+        },
+        {
+            "key": "field_66a90b24a9cb4",
+            "label": "URL pattern",
+            "name": "test_context_url",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Use <code>*<\/code> for wildcard matching (Ex. <code>\/category\/*<\/code>)",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_66a90a8e1ba36",
+                        "operator": "==",
+                        "value": "url"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_668ff2cd19299",
             "label": "Title Test Details",
             "name": "",
@@ -62,7 +117,15 @@
             "type": "repeater",
             "instructions": "",
             "required": 0,
-            "conditional_logic": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_668fec3b09224",
+                        "operator": "==",
+                        "value": "dom"
+                    }
+                ]
+            ],
             "wrapper": {
                 "width": "",
                 "class": "",

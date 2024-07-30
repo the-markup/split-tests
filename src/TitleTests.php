@@ -180,6 +180,12 @@ class TitleTests {
             return null;
         }
 
+        // Tests will only run in specific contexts ('all', 'home', or a 'url' pattern).
+        $test_id = get_post_meta($post->ID, 'split_test_post_id', true);
+        if (! $this->plugin->check_context($test_id)) {
+            return null;
+        }
+
         // Add a choice from the post's original values.
         $variants = [
             [

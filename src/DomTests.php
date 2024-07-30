@@ -61,6 +61,11 @@ class DOMTests {
             return null;
         }
 
+        // Tests only run in specific contexts ('all', 'home', or a 'url' pattern).
+        if (! $this->plugin->check_context($post->ID)) {
+            return null;
+        }
+
         // Add a choice from the post's original values.
         $variants = [
             [
