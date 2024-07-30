@@ -1,8 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -o errexit
 set -o pipefail
 set -o nounset
+
+# make sure we're running the right version of node
+source ~/.nvm/nvm.sh
+nvm use
 
 stop_containers() {
   echo "Shutting off containers ..."
