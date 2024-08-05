@@ -32,6 +32,7 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 } else {
     require_once __DIR__ . '/src/API.php';
     require_once __DIR__ . '/src/Assets.php';
+    require_once __DIR__ . '/src/Cron.php';
     require_once __DIR__ . '/src/Database.php';
     require_once __DIR__ . '/src/PostType.php';
     require_once __DIR__ . '/src/DOMTests.php';
@@ -40,6 +41,15 @@ if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 }
 
  add_action('plugins_loaded', function() {
-    global $split_tests_plugin;
-    $split_tests_plugin = new SplitTests\Plugin();
+    SplitTests\Plugin::init();
+});
+
+register_activation_hook(__FILE__, function() {
+    $plugin = SplitTests\Plugin::init();
+    $plugin->activate();
+});
+
+register_deactivation_hook(__FILE__, function() {
+    $plugin = SplitTests\Plugin::init();
+    $plugin->deactivate();
 });

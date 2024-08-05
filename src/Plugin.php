@@ -20,6 +20,25 @@ class Plugin {
      */
     public $onload_events;
 
+    /**
+     * Singleton instance var. There should only be one plugin per request.
+     *
+     * @var SplitTests\Plugin
+     */
+    private static $instance = null;
+
+    /**
+     * Singleton initiation.
+     *
+     * @return SplitTests\Plugin
+     */
+    static function init() {
+        if (! self::$instance) {
+            self::$instance = new Plugin();
+        }
+        return self::$instance;
+    }
+
 	/**
 	 * Setup sub-classes, tests, and ACF path filter.
 	 *
@@ -31,6 +50,7 @@ class Plugin {
         $this->post_type = new PostType($this);
         $this->assets = new Assets($this);
         $this->api = new API($this);
+        $this->cron = new Cron();
 
         // Setup tests
         $this->title_tests = new TitleTests($this);
@@ -41,6 +61,24 @@ class Plugin {
             $paths[] = dirname(__DIR__) . '/acf-fields';
             return $paths;
         });
+    }
+
+    /**
+     * Runs upon plugin activation.
+     *
+     * @return void
+     */
+    function activate() {
+        $this->cron->schedule();
+    }
+
+    /**
+     * Runs upon plugin deactivation.
+     *
+     * @return void
+     */
+    function deactivate() {
+        $this->cron->unschedule();
     }
 
     /**
