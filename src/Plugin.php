@@ -18,7 +18,7 @@ class Plugin {
      *
      * @var array
      */
-    protected $onload_events;
+    public $onload_events;
 
 	/**
 	 * Setup the database table, hooks, and tests.
@@ -28,8 +28,12 @@ class Plugin {
 	function __construct() {
         $this->database = new Database();
         $this->post_type = new PostType($this);
+        $this->assets = new Assets($this);
         $this->setup_hooks();
-        $this->setup_tests();
+
+        // Setup tests
+        $this->title_tests = new TitleTests($this);
+        $this->dom_tests = new DOMTests($this);
     }
 
     /**
@@ -38,27 +42,12 @@ class Plugin {
      * @return void
      */
     function setup_hooks() {
-        // Enqueue front-end JS
-        add_action('wp_enqueue_scripts', [$this, 'wp_enqueue_scripts']);
-
-        // Enqueue admin assets
-        add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
 
         // Expose API endpoint
         add_action('rest_api_init', [$this, 'rest_api_init']);
 
         // ACF JSON path
         add_filter('acf/settings/load_json', [$this, 'load_acf_json']);
-    }
-
-    /**
-     * Setup different kinds of split tests.
-     *
-     * @return void
-     */
-    function setup_tests() {
-        $this->title_tests = new TitleTests($this);
-        $this->dom_tests = new DOMTests($this);
     }
 
     /**
@@ -182,48 +171,6 @@ class Plugin {
     function load_acf_json($paths) {
         $paths[] = dirname(__DIR__) . '/acf-fields';
         return $paths;
-    }
-
-    /**
-     * Enqueue JavaScript for the front-end.
-     *
-     * @return void
-     */
-    function wp_enqueue_scripts() {
-        $asset = include(dirname(__DIR__) . '/build/split-tests.asset.php');
-        wp_enqueue_script(
-            'split-tests',
-            plugins_url('build/split-tests.js', __DIR__),
-            $asset['dependencies'],
-            $asset['version']
-        );
-
-        wp_localize_script('split-tests', 'split_tests', [
-            'nonce' => wp_create_nonce('wp_rest'),
-            'onload' => $this->onload_events,
-            'dom' => $this->dom_tests->get_variants()
-        ]);
-    }
-
-    /**
-     * Enqueue assets for the Split Tests edit page.
-     *
-     * @return void
-     */
-    function admin_enqueue_scripts() {
-        $asset = include(dirname(__DIR__) . '/build/admin.asset.php');
-        wp_enqueue_script(
-            'split-tests-admin',
-            plugins_url('build/admin.js', __DIR__),
-            ['acf-input', 'jquery', 'wp-url'],
-            $asset['version']
-        );
-        wp_enqueue_style(
-            'split-tests-admin',
-            plugins_url('build/admin.css', __DIR__),
-            [],
-            $asset['version']
-        );
     }
 
     /**
