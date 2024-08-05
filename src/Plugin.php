@@ -18,7 +18,7 @@ class Plugin {
      *
      * @var int
      */
-    protected $db_version = 1;
+    protected $db_version = 2;
 
     /**
      * A list of variant test/convert events to synchronize upon the page loading.
@@ -248,21 +248,55 @@ class Plugin {
      * @return void
      */
     function migrate_db($curr_version) {
-        global $wpdb;
+        // According to a comment on the dbDelta docs, you should always use
+        // CREATE, there's no need to UPDATE tables. Testing bears this out.
+        // https://developer.wordpress.org/reference/functions/dbdelta/#comment-4925
         if ($curr_version < 1) {
-            $table_name = $wpdb->prefix . 'split_tests';
-            $charset_collate = $wpdb->get_charset_collate();
-            $sql = "CREATE TABLE $table_name (
-                split_test_id BIGINT(20) UNSIGNED NOT NULL,
-                test_type VARCHAR(255) NOT NULL,
-                variant_index TINYINT UNSIGNED NOT NULL,
-                test_or_convert ENUM('test', 'convert'),
-                created_time DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL
-            ) $charset_collate;";
+            $sql = $this->migrate_db_1();
+        } else if ($curr_version < 2) {
+            $sql = $this->migrate_db_2();
         }
 	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 	    dbDelta($sql);
         update_option('split_tests_db_version', $this->db_version);
+    }
+
+    /**
+     * Database migration 1 creates a basic split_tests db table.
+     *
+     * @return void
+     */
+    function migrate_db_1() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'split_tests';
+        $charset_collate = $wpdb->get_charset_collate();
+        return "CREATE TABLE $table_name (
+            split_test_id BIGINT(20) UNSIGNED NOT NULL,
+            test_type VARCHAR(255) NOT NULL,
+            variant_index TINYINT UNSIGNED NOT NULL,
+            test_or_convert ENUM('test', 'convert'),
+            created_time DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL
+        ) $charset_collate;";
+    }
+
+    /**
+     * Database migration 2 adds two columns to the split_tests table.
+     *
+     * @return void
+     */
+    function migrate_db_2() {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'split_tests';
+        $charset_collate = $wpdb->get_charset_collate();
+        return "CREATE TABLE $table_name (
+            split_test_id BIGINT(20) UNSIGNED NOT NULL,
+            test_type VARCHAR(255) NOT NULL,
+            variant_index TINYINT UNSIGNED NOT NULL,
+            test_or_convert ENUM('test', 'convert'),
+            granularity VARCHAR(255) DEFAULT 'raw',
+            count INT(8) UNSIGNED NOT NULL DEFAULT 1,
+            created_time DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL
+        ) $charset_collate;";
     }
 
     /**
