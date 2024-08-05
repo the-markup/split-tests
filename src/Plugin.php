@@ -18,7 +18,7 @@ class Plugin {
      *
      * @var array
      */
-    protected $increment_events;
+    protected $onload_events;
 
 	/**
 	 * Setup the database table, hooks, and tests.
@@ -137,7 +137,7 @@ class Plugin {
      * @return void
      */
     function increment($test_or_convert, $split_test_id, $variant_index) {
-        $this->increment_events[] = [$test_or_convert, $split_test_id, $variant_index];
+        $this->onload_events[] = [$test_or_convert, $split_test_id, $variant_index];
     }
 
     /**
@@ -249,28 +249,9 @@ class Plugin {
 
         wp_localize_script('split-tests', 'split_tests', [
             'nonce' => wp_create_nonce('wp_rest'),
-            'onload' => $this->increment_events,
+            'onload' => $this->onload_events,
             'dom' => $this->dom_tests->get_variants()
         ]);
-    }
-
-    /**
-     * Synchronize any increment events.
-     *
-     * @return void
-     */
-    function wp_print_scripts() {
-        if (is_admin()) {
-            return;
-        }
-        if (! empty($this->increment_events)) {
-            $events = json_encode($this->increment_events);
-            echo <<<END
-<script>
-split_test_syn($events);
-</script>
-END;
-        }
     }
 
     /**
