@@ -181,9 +181,9 @@ class Plugin {
         $now = wp_date('Y-m-d H:i:s');
         $wpdb->query($wpdb->prepare("
             INSERT INTO {$wpdb->prefix}split_tests
-            (split_test_id, test_type, variant_index, test_or_convert, created_time)
+            (split_test_id, test_type, variant_index, test_or_convert, granularity, count, created_time)
             VALUES (%d, %s, %d, %s, %s)
-        ", $split_test_id, $test_type, $variant_index, $test_or_convert, $now));
+        ", $split_test_id, $test_type, $variant_index, $test_or_convert, 'raw', 1, $now));
     }
 
     /**
@@ -191,17 +191,17 @@ class Plugin {
      *
      * @return void
      */
-    function get_count($split_test_id, $test_type, $variant_index, $boop_type) {
+    function get_count($split_test_id, $test_type, $variant_index, $test_or_convert) {
         global $wpdb;
         $now = wp_date('Y-m-d H:i:s');
         return $wpdb->get_var($wpdb->prepare("
-            SELECT COUNT(split_test_id)
+            SELECT SUM(count)
             FROM {$wpdb->prefix}split_tests
             WHERE split_test_id = %d
               AND test_type = %s
               AND variant_index = %d
               AND test_or_convert = %s
-        ", $split_test_id, $test_type, $variant_index, $boop_type));
+        ", $split_test_id, $test_type, $variant_index, $test_or_convert));
     }
 
     /**
