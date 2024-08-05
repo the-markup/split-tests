@@ -280,7 +280,8 @@ class Plugin {
     }
 
     /**
-     * Database migration 2 adds two columns to the split_tests table.
+     * Database migration 2 adds two columns to the split_tests table:
+     * granularity (default 'raw') and count (default 1).
      *
      * @return void
      */
