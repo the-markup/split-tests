@@ -13,14 +13,7 @@ namespace SplitTests;
 
 class Plugin {
 
-    /**
-     * Database version lets us apply updates to the db schema in the future.
-     *
-     * @var int
-     */
-    protected $db_version = 2;
-
-    /**
+   /**
      * A list of variant test/convert events to synchronize upon the page loading.
      *
      * @var array
@@ -33,22 +26,10 @@ class Plugin {
 	 * @return void
 	 */
 	function __construct() {
-        $this->setup_db();
+        $this->database = new Database();
         $this->setup_hooks();
         $this->setup_post_type();
         $this->setup_tests();
-    }
-
-    /**
-     * Checks if the database schema requires updating, then updates it if necessary.
-     *
-     * @return void
-     */
-    function setup_db() {
-        $curr_db_version = get_option('split_tests_db_version', 0);
-        if ($curr_db_version < $this->db_version) {
-            $this->migrate_db($curr_db_version);
-        }
     }
 
     /**
@@ -243,64 +224,6 @@ class Plugin {
     }
 
     /**
-     * Migrates the database schema based on a version number.
-     *
-     * @return void
-     */
-    function migrate_db($curr_version) {
-        // According to a comment on the dbDelta docs, you should always use
-        // CREATE, there's no need to UPDATE tables. Testing bears this out.
-        // https://developer.wordpress.org/reference/functions/dbdelta/#comment-4925
-        if ($curr_version < 1) {
-            $sql = $this->migrate_db_1();
-        } else if ($curr_version < 2) {
-            $sql = $this->migrate_db_2();
-        }
-	    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-	    dbDelta($sql);
-        update_option('split_tests_db_version', $this->db_version);
-    }
-
-    /**
-     * Database migration 1 creates a basic split_tests db table.
-     *
-     * @return void
-     */
-    function migrate_db_1() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'split_tests';
-        $charset_collate = $wpdb->get_charset_collate();
-        return "CREATE TABLE $table_name (
-            split_test_id BIGINT(20) UNSIGNED NOT NULL,
-            test_type VARCHAR(255) NOT NULL,
-            variant_index TINYINT UNSIGNED NOT NULL,
-            test_or_convert ENUM('test', 'convert'),
-            created_time DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL
-        ) $charset_collate;";
-    }
-
-    /**
-     * Database migration 2 adds two columns to the split_tests table:
-     * granularity (default 'raw') and count (default 1).
-     *
-     * @return void
-     */
-    function migrate_db_2() {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'split_tests';
-        $charset_collate = $wpdb->get_charset_collate();
-        return "CREATE TABLE $table_name (
-            split_test_id BIGINT(20) UNSIGNED NOT NULL,
-            test_type VARCHAR(255) NOT NULL,
-            variant_index TINYINT UNSIGNED NOT NULL,
-            test_or_convert ENUM('test', 'convert'),
-            granularity VARCHAR(255) DEFAULT 'raw',
-            count INT(8) UNSIGNED NOT NULL DEFAULT 1,
-            created_time DATETIME DEFAULT '0000-00-00 00:00:00' NOT NULL
-        ) $charset_collate;";
-    }
-
-    /**
      * Setup acf-fields directory path, filtering on 'acf/settings/load_json'.
      *
      * @return array
@@ -317,22 +240,18 @@ class Plugin {
      */
     function wp_enqueue_scripts() {
         $asset = include(dirname(__DIR__) . '/build/split-tests.asset.php');
-        wp_register_script(
+        wp_enqueue_script(
             'split-tests',
             plugins_url('build/split-tests.js', __DIR__),
             $asset['dependencies'],
             $asset['version']
         );
 
-        if (!empty($this->increment_events)) {
-            $nonce = wp_create_nonce('wp_rest');
-            wp_localize_script('split-tests', 'split_tests', [
-                'nonce' => $nonce,
-                'onload' => $this->increment_events,
-                'dom' => $this->dom_tests->get_variants()
-            ]);
-            wp_enqueue_script('split-tests');
-        }
+        wp_localize_script('split-tests', 'split_tests', [
+            'nonce' => wp_create_nonce('wp_rest'),
+            'onload' => $this->increment_events,
+            'dom' => $this->dom_tests->get_variants()
+        ]);
     }
 
     /**
