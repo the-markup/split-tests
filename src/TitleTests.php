@@ -15,7 +15,7 @@ class TitleTests {
     /**
      * Keeps a reference to the parent plugin.
      *
-     * @var Plugin
+     * @var SplitTests\Plugin
      */
     protected $plugin = null;
 
@@ -53,7 +53,7 @@ class TitleTests {
     /**
 	 * Setup title test hooks.
 	 *
-	 * @return void
+	 * @return SplitTests\TitleTests
 	 */
 	function __construct($plugin) {
         $this->plugin = $plugin;

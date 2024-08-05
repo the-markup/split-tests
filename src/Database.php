@@ -23,7 +23,7 @@ class Database {
     /**
      * Checks if the database schema requires updating, then updates it if necessary.
      *
-     * @return void
+     * @return SplitTests\Database
      */
     function __construct() {
         $curr_db_version = get_option('split_tests_db_version', 0);
