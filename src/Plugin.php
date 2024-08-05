@@ -21,7 +21,7 @@ class Plugin {
     public $onload_events;
 
 	/**
-	 * Setup the database table, hooks, and tests.
+	 * Setup sub-classes, tests, and ACF path filter.
 	 *
 	 * @return SplitTests\Plugin
 	 */
@@ -36,8 +36,11 @@ class Plugin {
         $this->title_tests = new TitleTests($this);
         $this->dom_tests = new DOMTests($this);
 
-        // ACF JSON path
-        add_filter('acf/settings/load_json', [$this, 'load_acf_json']);
+        // Add ACF JSON path
+        add_filter('acf/settings/load_json', function($paths) {
+            $paths[] = dirname(__DIR__) . '/acf-fields';
+            return $paths;
+        });
     }
 
     /**
@@ -121,15 +124,5 @@ class Plugin {
               AND variant_index = %d
               AND test_or_convert = %s
         ", $split_test_id, $test_type, $variant_index, $test_or_convert));
-    }
-
-    /**
-     * Setup acf-fields directory path, filtering on 'acf/settings/load_json'.
-     *
-     * @return array
-     */
-    function load_acf_json($paths) {
-        $paths[] = dirname(__DIR__) . '/acf-fields';
-        return $paths;
     }
 }
