@@ -26,25 +26,15 @@ class Plugin {
 	 * @return SplitTests\Plugin
 	 */
 	function __construct() {
+        // Setup sub-classes
         $this->database = new Database();
         $this->post_type = new PostType($this);
         $this->assets = new Assets($this);
-        $this->setup_hooks();
+        $this->api = new API($this);
 
         // Setup tests
         $this->title_tests = new TitleTests($this);
         $this->dom_tests = new DOMTests($this);
-    }
-
-    /**
-     * Setup action/filter handlers.
-     *
-     * @return void
-     */
-    function setup_hooks() {
-
-        // Expose API endpoint
-        add_action('rest_api_init', [$this, 'rest_api_init']);
 
         // ACF JSON path
         add_filter('acf/settings/load_json', [$this, 'load_acf_json']);
@@ -100,36 +90,6 @@ class Plugin {
     }
 
     /**
-     * Handle incoming 'increment' API request.
-     *
-     * @return array
-     */
-    function rest_api_events($request) {
-        $ok_rsp = true;
-        try {
-            $nonce = $request->get_param('_wpnonce');
-            $events = json_decode($request->get_body(), 'as array');
-            if (! wp_verify_nonce($nonce, 'wp_rest')) {
-                throw new \Exception("rest_api_events: invalid nonce '$nonce'");
-            }
-            foreach ($events as $event) {
-                if (count($event) != 3) {
-                    continue;
-                }
-                list($test_or_convert, $split_test_id, $variant_index) = $event;
-                $test_type = get_field('test_type', $split_test_id);
-                $this->insert_split_test_event($test_or_convert, $split_test_id, $test_type, $variant_index);
-            }
-        } catch(\Exception $err) {
-            $ok_rsp = false;
-            error_log($err);
-        }
-        return [
-            'ok' => $ok_rsp
-        ];
-    }
-
-    /**
      * Record a variant statistic ('test' or 'convert') event for a given
      * split test post ID in the 'wp_split_tests' table.
      *
@@ -171,18 +131,5 @@ class Plugin {
     function load_acf_json($paths) {
         $paths[] = dirname(__DIR__) . '/acf-fields';
         return $paths;
-    }
-
-    /**
-     * Setup API endpoint.
-     *
-     * @return void
-     */
-    function rest_api_init() {
-        $worked = register_rest_route('split-tests/v1', 'events', [
-              'methods' => 'POST',
-              'callback' => [$this, 'rest_api_events'],
-              'permission_callback' => '__return_true',
-        ]);
     }
 }

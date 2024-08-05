@@ -30,9 +30,12 @@
 if (file_exists(__DIR__ . '/vendor/autoload.php')) {
 	require_once(__DIR__ . '/vendor/autoload.php');
 } else {
+    require_once __DIR__ . '/src/API.php';
+    require_once __DIR__ . '/src/Assets.php';
     require_once __DIR__ . '/src/Database.php';
-    require_once __DIR__ . '/src/TitleTests.php';
+    require_once __DIR__ . '/src/PostType.php';
     require_once __DIR__ . '/src/DOMTests.php';
+    require_once __DIR__ . '/src/TitleTests.php';
 	require_once __DIR__ . '/src/Plugin.php';
 }
 
