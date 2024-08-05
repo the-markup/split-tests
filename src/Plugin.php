@@ -182,7 +182,7 @@ class Plugin {
         $wpdb->query($wpdb->prepare("
             INSERT INTO {$wpdb->prefix}split_tests
             (split_test_id, test_type, variant_index, test_or_convert, granularity, count, created_time)
-            VALUES (%d, %s, %d, %s, %s)
+            VALUES (%d, %s, %d, %s, %s, %d, %s)
         ", $split_test_id, $test_type, $variant_index, $test_or_convert, 'raw', 1, $now));
     }
 
