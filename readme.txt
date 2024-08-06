@@ -27,6 +27,35 @@ This section describes how to install the plugin and get it working.
 1. Upload `split-tests/` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
+== Developer setup ==
+
+This repo contains everything you need to get a test environment setup using the official [WordPress docker image](https://hub.docker.com/_/wordpress).
+
+__Developer dependencies__
+
+* [node.js](https://nodejs.org/) (tested on v20)
+* [nvm](https://github.com/nvm-sh/nvm#readme)
+* [Docker Desktop](https://www.docker.com/products/docker-desktop)
+
+__Build and start__
+
+        ./bin/build
+        ./bin/start
+
+__Local website__
+
+Once you've built and started the docker containers, you can load up the website at [localhost:8080](http://localhost:8080). If you reload the page a couple times, you should see parts of the page change in response to two tests that are set up.
+
+1. **DOM test:** there are two variants for the about text "A commitment to innovation and sustainability" and "A commitment to maintenance and durability". If you click on the "About us" button, that will register as a conversion for a given variant.
+2. **Post title:** there are three variants for the Hello World post, if you scroll down to "Watch, Read, Listen" and reload you should see English, Spanish, and French versions of "Hello World." Clicking through to load the post will register as a conversion for that test.
+
+__WordPress admin credentials__
+
+Username: `admin`  
+Password: `password`
+
+You can explore the example tests by clicking on [Split Tests](http://localhost:8080/wp-admin/edit.php?post_type=split_test) in the admin sidebar.
+
 == Frequently Asked Questions ==
 
 = Did you say there's no tracking? =
@@ -43,7 +72,9 @@ Yes, the tests will work fine with HTML generated behind a CDN, or using other k
 
 == Screenshots ==
 
-TK
+1. Split Tests posts page
+2. Split Test post editor
+3. Post Title variants
 
 == Changelog ==
 
