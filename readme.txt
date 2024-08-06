@@ -5,7 +5,7 @@ Tags: split-tests
 Requires at least: 4.5
 Tested up to: 6.6.1
 Requires PHP: 5.6
-Stable tag: 0.0.3
+Stable tag: 0.0.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,10 +13,12 @@ Basic A/B testing for WordPress.
 
 == Description ==
 
-A WordPRess plugin to add A/B split tests that without tracking individual users. Currently there are two kind of tests:
+A WordPRess plugin to add A/B split tests without tracking individual users. Currently there are two kind of tests:
 
 * **Post title tests**: test multiple headlines for a single post.
 * **DOM tests**: test arbitrary changes to text based on DOM manipluations.
+
+Depends on Advanced Custom Fields plugin, which you will need to install and license separately.
 
 == Installation ==
 
@@ -45,11 +47,14 @@ TK
 
 == Changelog ==
 
-= 0.0.1 =
-Split tests for post titles
+= 0.0.4 =
+Adds a cron mechanism to combine raw events in the database into daily aggregates
+
+= 0.0.3 =
+Context for where tests run ('all', 'home', or a 'url' pattern)
 
 = 0.0.2 =
 Split tests for DOM changes
 
-= 0.0.3 =
-Context for where tests run ('all', 'home', or a 'url' pattern)
+= 0.0.1 =
+Split tests for post titles
