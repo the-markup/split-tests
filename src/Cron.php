@@ -81,7 +81,7 @@ class Cron {
             ", $day->split_test_id, $day->test_type, $day->variant_index, $day->test_or_convert, 'day', $day->count, $day->created_date));
         }
 
-        // Delete faw results
+        // Delete raw results
         $wpdb->query($wpdb->prepare("
             DELETE FROM {$wpdb->prefix}split_tests
             WHERE DATE(created_time) < %s
