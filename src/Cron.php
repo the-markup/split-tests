@@ -22,6 +22,8 @@ class Cron {
         // Add cron handler
         add_action('split_tests_cron', [$this, 'split_tests_cron']);
 
+        // Add an endpoint for testing purposes
+        // i.e., http://localhost:8080/wp-admin/admin-ajax.php?action=split_tests_cron
         add_action('wp_ajax_split_tests_cron', [$this, 'split_tests_cron']);
     }
 
