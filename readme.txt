@@ -13,10 +13,10 @@ Basic A/B testing for WordPress.
 
 == Description ==
 
-A WordPRess plugin to add A/B split tests without tracking individual users. Currently there are two kind of tests:
+A WordPress plugin to add A/B split tests without tracking individual users. Currently there are two kind of tests:
 
 * **Post title tests**: test multiple headlines for a single post.
-* **DOM tests**: test arbitrary changes to text based on DOM manipluations.
+* **DOM tests**: test arbitrary changes to page content on DOM manipluations.
 
 Depends on [Advanced Custom Fields Pro plugin](https://www.advancedcustomfields.com/pro/), which you will need to install and license separately.
 
