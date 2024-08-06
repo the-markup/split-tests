@@ -25,10 +25,6 @@ window.addEventListener('load', () => {
             const variant = split_tests.dom[id];
             postEvents([["test", parseInt(id), variant.index]]);
 
-            if (variant.noop) {
-                continue;
-            }
-
             if (variant.content) {
                 for (let replacement of variant.content) {
                     let targets = document.querySelectorAll(replacement.selector);

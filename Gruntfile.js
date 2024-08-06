@@ -23,6 +23,14 @@ module.exports = function( grunt ) {
 			your_target: {
 				files: {
 					'README.md': 'readme.txt'
+				},
+				options: {
+					screenshot_url: "assets/{screenshot}.png",
+					post_convert: readme => {
+						// Omit the WordPress readme.txt header tags
+						readme = readme.replace(/^\*\*(.+?):\*\* .+\s\s\n/gm, '');
+						return readme;
+					}
 				}
 			},
 		},

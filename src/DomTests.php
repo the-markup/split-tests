@@ -22,7 +22,7 @@ class DOMTests {
     /**
 	 * Setup DOM test hooks.
 	 *
-	 * @return void
+	 * @return SplitTests\DOMTests
 	 */
 	function __construct($plugin) {
         $this->plugin = $plugin;

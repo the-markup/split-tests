@@ -8,6 +8,22 @@ set -o nounset
 source ~/.nvm/nvm.sh
 nvm use
 
+if [ ! -f .env ] ; then
+    echo "Setting up .env ..."
+    echo
+    cp .env.sample .env
+    echo
+
+    echo "What is your ACF Pro key?"
+    read -p "> " ACF_PRO_KEY
+    echo >> .env
+    echo "# This is for the ACF Pro installer plugin" >> .env
+    echo "# See: https://github.com/dphiffer/acf-pro-installer" >> .env
+    echo "ACF_PRO_KEY=$ACF_PRO_KEY" >> .env
+    echo
+    echo "Thank you!"
+fi
+
 echo "Building and then starting containers..."
 echo
 docker compose build
