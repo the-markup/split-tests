@@ -61,7 +61,7 @@ class Cron {
         // Select raw aggregate counts by day
         $days = $wpdb->get_results($wpdb->prepare("
             SELECT split_test_id,
-                   test_type
+                   test_type,
                    variant_index,
                    test_or_convert,
                    DATE(created_time) AS created_date,
