@@ -78,6 +78,9 @@ class TitleTests {
         // Permalink filter
         add_filter('pre_post_link', [$this, 'pre_post_link'], 10, 2);
 
+        // Title filter
+        add_filter('the_title', [$this, 'the_title'], 10, 2);
+
         // Add split_test posts whenever you save a post with a split test
         add_action('save_post', [$this, 'save_post'], 10, 2);
 
@@ -218,6 +221,21 @@ class TitleTests {
         }
         $post = apply_filters('split_tests_post_variant', $post);
         return $permalink;
+    }
+
+    /**
+     * Handle 'the_title' filter on post titles.
+     *
+     * @return string
+     */
+    function the_title($post_title, $post_id) {
+        // Don't adjust links in the admin dashboard.
+        if (is_admin()) {
+            return $post_title;
+        }
+        $post = get_post($post_id);
+        $post = apply_filters('split_tests_post_variant', $post);
+        return $post->post_title;
     }
 
     /**
