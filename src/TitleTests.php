@@ -154,7 +154,7 @@ class TitleTests {
      * @return array
      */
     function get_variant($post) {
-        if (is_single() && $post->post_type == 'post') {
+        if ($this->is_single($post)) {
             $variant = null;
             if (! empty($this->chosen_variants[$post->ID])) {
                 $variant = $this->chosen_variants[$post->ID];
@@ -470,5 +470,15 @@ END;
             $results[$top_index] = "<strong class=\"split-tests-winner\">$results[$top_index]</strong>";
         }
         echo implode("<br>\n", $results);
+    }
+
+    /**
+     * Returns true if we're loading a single post.
+     *
+     * @return bool
+     */
+    function is_single($post) {
+        $is_single = (is_single() && $post->post_type == 'post');
+        return apply_filters('split_tests_is_single', $is_single);
     }
 }
