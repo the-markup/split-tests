@@ -54,9 +54,9 @@ class Assets {
     }
 
     /**
-     * Enqueue JavaScript for the front-end.
+     * Return JavaScript details for the front-end.
      *
-     * @return void
+     * @return array
      */
     function get_script_details() {
         $url = plugins_url('build/split-tests.js', __DIR__);
