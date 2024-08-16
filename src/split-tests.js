@@ -1,5 +1,6 @@
-window.addEventListener('load', () => {
-    if (! split_tests) {
+export default function split_tests_init() {
+
+    if (typeof split_tests == 'undefined') {
         return;
     }
 
@@ -7,7 +8,7 @@ window.addEventListener('load', () => {
         if (!events || events.length < 1) {
             return;
         }
-        return fetch(`/wp-json/split-tests/v1/events?_wpnonce=${split_tests.nonce}`, {
+        return fetch(`${split_tests.endpoint_url}?_wpnonce=${split_tests.nonce}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -54,4 +55,6 @@ window.addEventListener('load', () => {
             }
         }
     }
-});
+}
+
+window.addEventListener('load', split_tests_init);

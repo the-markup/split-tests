@@ -41,19 +41,36 @@ class Assets {
      * @return void
      */
     function wp_enqueue_scripts() {
-        $asset = include(dirname(__DIR__) . '/build/split-tests.asset.php');
+        $script = $this->get_script_details();
+
         wp_enqueue_script(
             'split-tests',
-            plugins_url('build/split-tests.js', __DIR__),
-            $asset['dependencies'],
-            $asset['version']
+            $script['url'],
+            $script['dependencies'],
+            $script['version']
         );
 
-        wp_localize_script('split-tests', 'split_tests', [
-            'nonce' => wp_create_nonce('wp_rest'),
-            'onload' => $this->plugin->onload_events,
-            'dom' => $this->plugin->dom_tests->get_variants()
-        ]);
+        wp_localize_script('split-tests', 'split_tests', $script['localize']);
+    }
+
+    /**
+     * Enqueue JavaScript for the front-end.
+     *
+     * @return void
+     */
+    function get_script_details() {
+        $url = plugins_url('build/split-tests.js', __DIR__);
+        $asset = include(dirname(__DIR__) . '/build/split-tests.asset.php');
+        return [
+            'url' => $url,
+            ... $asset,
+            'localize' => [
+                'endpoint_url' => apply_filters('split_tests_endpoint_url', '/wp-json/split-tests/v1/events'),
+                'nonce' => wp_create_nonce('wp_rest'),
+                'onload' => $this->plugin->onload_events,
+                'dom' => $this->plugin->dom_tests->get_variants()
+            ]
+        ];
     }
 
     /**
