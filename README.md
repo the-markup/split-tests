@@ -17,6 +17,13 @@ This section describes how to install the plugin and get it working.
 1. Upload `split-tests/` to the `/wp-content/plugins/` directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
 
+## Filters ##
+
+- `split_tests_endpoint_url` - where JavaScript events should be sent (default is `/wp-admin/admin-ajax.php?action=split_tests`).
+- `split_tests_current_url` - used to target on which pages tests will run (default is `$_REQUEST['REQUEST_URI']`).
+- `split_tests_is_single` - whether a single post is being loaded (default is the result of `is_single()` only for the `post` post type).
+- `split_tests_post_variant` - used internally to modify a post.
+
 ## Developer setup ##
 
 This repo contains everything you need to get a test environment setup using the official [WordPress docker image](https://hub.docker.com/_/wordpress).
