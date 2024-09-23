@@ -27,15 +27,8 @@ class API {
      */
     function __construct($plugin) {
         $this->plugin = $plugin;
-
-        add_action('rest_api_init', function() {
-            // Setup events route: /wp-json/split-tests/v1/events
-            register_rest_route('split-tests/v1', 'events', [
-                'methods' => 'POST',
-                'callback' => [$this, 'rest_api_events'],
-                'permission_callback' => '__return_true',
-          ]);
-        });
+        add_action('wp_ajax_split_tests', [$this, 'ajax_handler']);
+        add_action('wp_ajax_nopriv_split_tests', [$this, 'ajax_handler']);
     }
 
     /**
@@ -43,27 +36,20 @@ class API {
      *
      * @return array
      */
-    function rest_api_events($request) {
+    function ajax_handler() {
         $ok_rsp = true;
         try {
-            $nonce = $request->get_param('_wpnonce');
-            $events = json_decode($request->get_body(), 'as array');
-            if (! wp_verify_nonce($nonce, 'wp_rest')) {
-                throw new \Exception("rest_api_events: invalid nonce '$nonce'");
-            }
-            foreach ($events as $event) {
-                if (count($event) != 3) {
-                    continue;
-                }
-                list($test_or_convert, $split_test_id, $variant_index) = $event;
-                $test_type = get_field('test_type', $split_test_id);
-                $this->plugin->insert_split_test_event(
-                    $test_or_convert,
-                    $split_test_id,
-                    $test_type,
-                    $variant_index
-                );
-            }
+            check_ajax_referer('split_tests_event', 'n');
+            $test_or_convert = $_POST['t'];
+            $split_test_id = intval($_POST['i']);
+            $variant_index = intval($_POST['v']);
+            $test_type = get_field('test_type', $split_test_id);
+            $this->plugin->insert_split_test_event(
+                $test_or_convert,
+                $split_test_id,
+                $test_type,
+                $variant_index
+            );
         } catch(\Exception $err) {
             $ok_rsp = false;
             error_log($err);

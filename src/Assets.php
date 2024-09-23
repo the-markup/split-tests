@@ -65,8 +65,8 @@ class Assets {
             'url' => $url,
             ... $asset,
             'localize' => [
-                'endpoint_url' => apply_filters('split_tests_endpoint_url', '/wp-json/split-tests/v1/events'),
-                'nonce' => wp_create_nonce('wp_rest'),
+                'endpoint_url' => admin_url('admin-ajax.php') . '?action=split_tests',
+                'nonce' => wp_create_nonce('split_tests_event'),
                 'onload' => $this->plugin->onload_events,
                 'dom' => $this->plugin->dom_tests->get_variants()
             ]
