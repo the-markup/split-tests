@@ -61,11 +61,13 @@ class Assets {
     function get_script_details() {
         $url = plugins_url('build/split-tests.js', __DIR__);
         $asset = include(dirname(__DIR__) . '/build/split-tests.asset.php');
+        $admin_ajax_url = admin_url('admin-ajax.php') . '?action=split_tests';
+        $endpoint_url = apply_filters('split_tests_endpoint_url', $admin_ajax_url);
         return [
             'url' => $url,
             ... $asset,
             'localize' => [
-                'endpoint_url' => admin_url('admin-ajax.php') . '?action=split_tests',
+                'endpoint_url' => $endpoint_url,
                 'nonce' => wp_create_nonce('split_tests_event'),
                 'onload' => $this->plugin->onload_events,
                 'dom' => $this->plugin->dom_tests->get_variants()
