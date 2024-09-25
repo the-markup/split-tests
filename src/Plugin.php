@@ -91,7 +91,7 @@ class Plugin {
         if ($context == 'all') {
             return true;
         } else if ($context == 'home') {
-            return is_front_page();
+            return is_front_page() || apply_filters('split_tests_current_url', $_SERVER['REQUEST_URI']) == '/';
         } else if ($context == 'url') {
             return $this->check_context_url($test_id);
         }
