@@ -11,7 +11,7 @@
 
 namespace SplitTests;
 
-class DOMTests {
+class DomTests {
     /**
      * Keeps a reference to the parent plugin.
      *
@@ -22,7 +22,7 @@ class DOMTests {
     /**
 	 * Setup DOM test hooks.
 	 *
-	 * @return SplitTests\DOMTests
+	 * @return SplitTests\DomTests
 	 */
 	function __construct($plugin) {
         $this->plugin = $plugin;

@@ -54,7 +54,7 @@ class Plugin {
 
         // Setup tests
         $this->title_tests = new TitleTests($this);
-        $this->dom_tests = new DOMTests($this);
+        $this->dom_tests = new DomTests($this);
 
         // Add ACF JSON path
         add_filter('acf/settings/load_json', function($paths) {
