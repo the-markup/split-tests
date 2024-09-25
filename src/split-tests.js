@@ -4,6 +4,16 @@ export default function split_tests_init() {
         return;
     }
 
+    function findHref(el) {
+        if (el.getAttribute('href')) {
+            return el.getAttribute('href');
+        } else if (el.nodeName != 'BODY') {
+            return findHref(el.parentNode);
+        } else {
+            return null;
+        }
+    }
+
     function postEvents(events) {
         if (!events || events.length < 1) {
             return;
@@ -59,7 +69,12 @@ export default function split_tests_init() {
                     target.addEventListener('click', async e => {
                         e.preventDefault();
                         await postEvents([["convert", parseInt(id), variant.index]]);
-                        window.location = e.target.getAttribute('href');
+                        let href = findHref(e.target);
+                        if (href) {
+                            window.location = href;
+                        } else {
+                            console.log('Error: No href attribute found.');
+                        }
                     });
                 }
             }
