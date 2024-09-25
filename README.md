@@ -81,6 +81,17 @@ Yes, the tests will work fine with HTML generated behind a CDN, or using other k
 
 ## Changelog ##
 
+### 0.0.6 ###
+- Switch from REST API endpoints to `admin-ajax.php`.
+- Adds `split_tests_endpoint_url` and `split_tests_current_url` filters (for headless).
+- Click conversions check up the DOM tree for a parent with an `href` attribute if one isn't found on the click event target.
+- Fixes a case-sensitivity bug (`DomTests` instead of `DOMTests`).
+
+### 0.0.5 ###
+- Filter on `the_title` for post title tests
+- Add `split_tests_is_single` hook
+- Make JS more headless-friendly
+
 ### 0.0.4 ###
 Adds a cron mechanism to combine raw events in the database into daily aggregates
 
