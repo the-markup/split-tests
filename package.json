@@ -9,7 +9,7 @@
     "grunt": "grunt default"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^28.4.0",
+    "@wordpress/scripts": "^30.0.2",
     "grunt": "~1.6.1",
     "grunt-wp-i18n": "~1.0.3",
     "grunt-wp-readme-to-markdown": "~2.1.0"
