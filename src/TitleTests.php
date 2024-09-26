@@ -312,6 +312,7 @@ class TitleTests {
             }
         } else {
             $old_count = get_post_meta($split_test_post_id, 'variant_count', true);
+            $new_count = count($variants);
             if ($old_count < $new_count) {
                 for ($i = $old_count; $i < $new_count; $i++) {
                     update_post_meta($split_test_post_id, "variant_{$i}_test", 0);
