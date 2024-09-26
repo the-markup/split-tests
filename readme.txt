@@ -5,7 +5,7 @@ Tags: split-tests
 Requires at least: 4.5
 Tested up to: 6.6.2
 Requires PHP: 5.6
-Stable tag: 0.0.6
+Stable tag: 0.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,10 @@ Yes, the tests will work fine with HTML generated behind a CDN, or using other k
 3. Post Title variants
 
 == Changelog ==
+
+= 0.0.7 =
+- Bugfix: undefined variable in title tests.
+- Updates version of `@wordpress/scripts` to latest.
 
 = 0.0.6 =
 - Switch from REST API endpoints to `admin-ajax.php`.

@@ -81,6 +81,10 @@ Yes, the tests will work fine with HTML generated behind a CDN, or using other k
 
 ## Changelog ##
 
+### 0.0.7 ###
+- Bugfix: undefined variable in title tests.
+- Updates version of `@wordpress/scripts` to latest.
+
 ### 0.0.6 ###
 - Switch from REST API endpoints to `admin-ajax.php`.
 - Adds `split_tests_endpoint_url` and `split_tests_current_url` filters (for headless).

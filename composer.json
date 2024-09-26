@@ -1,7 +1,7 @@
 {
   "name": "the-markup/split-tests",
   "description": "Simple A/B testing for WordPress",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "type": "wordpress-plugin",
   "repositories": [
     {
