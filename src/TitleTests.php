@@ -165,7 +165,7 @@ class TitleTests {
             if (! $this->converted) {
                 $this->converted = true;
                 $variants = get_field('title_variants', $post->ID);
-                if (count($variants) > 0) {
+                if (! empty($variants) && count($variants) > 0) {
                     $this->increment_convert_count($post->ID, $variant_index);
                 }
             }
@@ -445,6 +445,9 @@ END;
     function show_results_summary($post_id) {
         $target_id = get_post_meta($post_id, 'target_post_id', true);
         $_variants = get_field('title_variants', $target_id);
+        if (empty($_variants)) {
+            return;
+        }
         $variants = [
             ['name' => 'Default'],
             ... $_variants
