@@ -7,7 +7,7 @@
  * Author URI:      https://themarkup.org/
  * Text Domain:     split-tests
  * Domain Path:     /languages
- * Version:         0.0.7
+ * Version:         0.0.8
  *
  * @package         SplitTests
  */

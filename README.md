@@ -81,6 +81,9 @@ Yes, the tests will work fine with HTML generated behind a CDN, or using other k
 
 ## Changelog ##
 
+### 0.0.8 ###
+- Bugfix: allow for zero title tests.
+
 ### 0.0.7 ###
 - Bugfix: undefined variable in title tests.
 - Updates version of `@wordpress/scripts` to latest.
