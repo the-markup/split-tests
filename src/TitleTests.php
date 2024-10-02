@@ -119,7 +119,7 @@ class TitleTests {
 
         // Found a non-existant slug? Let's check for variant 'url_slug'
         // postmeta values.
-        if (is_single() && empty($posts) && !empty($this->request_slug)) {
+        if ($this->is_single() && empty($posts) && !empty($this->request_slug)) {
             $request_slug = $this->request_slug;
             $this->request_slug = '';
             // We may now have a single post that matches the requested slug.
@@ -154,7 +154,7 @@ class TitleTests {
      * @return array
      */
     function get_variant($post) {
-        if ($this->is_single($post)) {
+        if ($this->is_single()) {
             $variant = null;
             if (! empty($this->chosen_variants[$post->ID])) {
                 $variant = $this->chosen_variants[$post->ID];
@@ -481,8 +481,8 @@ END;
      *
      * @return bool
      */
-    function is_single($post) {
-        $is_single = (is_single() && $post->post_type == 'post');
+    function is_single() {
+        $is_single = (is_single() && get_post_type() == 'post');
         return apply_filters('split_tests_is_single', $is_single);
     }
 }
