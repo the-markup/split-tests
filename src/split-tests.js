@@ -38,7 +38,15 @@ export default function split_tests_init() {
     }
 
     if (split_tests.onload) {
-        postEvents(split_tests.onload);
+        let redirect = split_tests.onload.filter(event => event[0] == 'redirect');
+        if (redirect.length > 0) {
+            // This is here to redirect unpublished post title tests back to
+            // the default permalink.
+            window.location = redirect[0][1];
+            return;
+        } else {
+            postEvents(split_tests.onload);
+        }
     }
 
     if (split_tests.dom) {

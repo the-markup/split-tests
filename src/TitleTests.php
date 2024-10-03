@@ -111,6 +111,11 @@ class TitleTests {
             return $posts;
         }
 
+        // Skip non-'post' queries.
+        if (!empty($query->query_vars['post_type']) && $query->query_vars['post_type'] != 'post') {
+            return $posts;
+        }
+
         // Avoid double-applying the variant filter.
         // (See also: 'check_variant_url_slugs' called below.)
         if ($this->ignore_post_variants) {
@@ -165,7 +170,14 @@ class TitleTests {
             if (! $this->converted) {
                 $this->converted = true;
                 $variants = get_field('title_variants', $post->ID);
-                if (! empty($variants) && count($variants) > 0) {
+                $split_test_post_id = get_post_meta($post->ID, 'split_test_post_id', true);
+                if ($split_test_post_id && get_post_status($split_test_post_id) != 'publish') {
+                    // If the test is not published, don't convert and redirect
+                    // to the default variant if it's not the selected one.
+                    if ($variant_index > 0) {
+                        $this->redirect_to_default($post->ID);
+                    }
+                } else if (! empty($variants) && count($variants) > 0) {
                     $this->increment_convert_count($post->ID, $variant_index);
                 }
             }
@@ -378,6 +390,17 @@ END;
         }
         $split_test_id = intval($split_test_id);
         $this->plugin->increment('convert', $split_test_id, $variant_index);
+    }
+
+    /**
+     * Redirect to default variant if the split_test post is not published.
+     *
+     * @return void
+     */
+    function redirect_to_default($target_id) {
+        remove_filter('pre_post_link', [$this, 'pre_post_link'], 10, 2);
+        $default_permalink = get_permalink($target_id);
+        $this->plugin->redirect($default_permalink);
     }
 
     /**

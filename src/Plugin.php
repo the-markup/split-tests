@@ -82,11 +82,15 @@ class Plugin {
     }
 
     /**
-     * Check that a test context matches the current page request.
+     * Check that a test is published and its configured context matches the
+     * current page request.
      *
      * @return bool
      */
     function check_context($test_id) {
+        if (get_post_status($test_id) != 'publish') {
+            return false;
+        }
         $context = get_field('test_context', $test_id);
         if ($context == 'all') {
             return true;
@@ -128,6 +132,19 @@ class Plugin {
      */
     function increment($test_or_convert, $split_test_id, $variant_index) {
         $this->onload_events[] = [$test_or_convert, $split_test_id, $variant_index];
+    }
+
+    /**
+     * Redirect browser to a URL onload.
+     *
+     * @return void
+     */
+    function redirect($url) {
+        if (apply_filters('split_tests_is_headless', false)) {
+            $this->onload_events[] = ['redirect', $url];
+        } else {
+            wp_redirect($url);
+        }
     }
 
     /**
