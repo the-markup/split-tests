@@ -29,6 +29,7 @@ This section describes how to install the plugin and get it working.
 
 == Filters ==
 
+- `split_tests_is_headless` - return true from a filter handler if you are using this plugin on headless WordPress (redirects get handled differently).
 - `split_tests_endpoint_url` - where JavaScript events should be sent (default is `/wp-admin/admin-ajax.php?action=split_tests`).
 - `split_tests_current_url` - used to target on which pages tests will run (default is `$_REQUEST['REQUEST_URI']`).
 - `split_tests_is_single` - whether a single post is being loaded (default is the result of `is_single()` only for the `post` post type).
@@ -84,6 +85,10 @@ Yes, the tests will work fine with HTML generated behind a CDN, or using other k
 3. Post Title variants
 
 == Changelog ==
+
+= 0.0.9 =
+- Adds a `split_tests_is_headless` filter that changes how redirects are handled.
+- Bugfix: don't apply unpublished tests to the site.
 
 = 0.0.8 =
 - Bugfix: allow for zero title tests.
