@@ -28,16 +28,16 @@ class Database {
     function __construct() {
         $curr_db_version = get_option('split_tests_db_version', 0);
         if ($curr_db_version < $this->db_version) {
-            $this->migrate_db($curr_db_version);
+            $this->migrate_db();
         }
     }
 
     /**
-     * Migrates the database schema based on a version number.
+     * Migrates the database table schema using dbDelta.
      *
      * @return void
      */
-    function migrate_db($curr_version) {
+    function migrate_db() {
         global $wpdb;
 
         $table_name = $wpdb->prefix . 'split_tests';
