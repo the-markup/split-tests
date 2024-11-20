@@ -177,7 +177,7 @@ class TitleTests {
                     if ($variant_index > 0) {
                         $this->redirect_to_default($post->ID);
                     }
-                } else if (! empty($variants) && count($variants) > 0) {
+                } else if ($this->did_convert($variants, $split_test_post_id)) {
                     $this->increment_convert_count($post->ID, $variant_index);
                 }
             }
@@ -219,6 +219,24 @@ class TitleTests {
         $this->increment_test_count($post->ID, $index);
 
         return $variant;
+    }
+
+    /**
+     * Returns true of the conditions have been met to convert a title test.
+     *
+     * @return bool
+     */
+    function did_convert($variants, $test_id) {
+        if (empty($variants) || count($variants) == 0) {
+            return false;
+        }
+
+        $conversion = get_field('conversion', $test_id);
+        if ($conversion == 'click') {
+            return false;
+        }
+
+        return true;
     }
 
     /**
