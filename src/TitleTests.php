@@ -170,15 +170,15 @@ class TitleTests {
             if (! $this->converted) {
                 $this->converted = true;
                 $variants = get_field('title_variants', $post->ID);
-                $split_test_post_id = get_post_meta($post->ID, 'split_test_post_id', true);
-                if ($split_test_post_id && get_post_status($split_test_post_id) != 'publish') {
+                $test_id = get_post_meta($post->ID, 'split_test_post_id', true);
+                if ($test_id && get_post_status($test_id) != 'publish') {
                     // If the test is not published, don't convert and redirect
                     // to the default variant if it's not the selected one.
                     if ($variant_index > 0) {
                         $this->redirect_to_default($post->ID);
                     }
-                } else if ($this->did_convert($variants, $split_test_post_id)) {
-                    $this->increment_convert_count($post->ID, $variant_index);
+                } else if ($this->did_convert($variants, $test_id)) {
+                    $this->plugin->increment('convert', $test_id, $variant_index);
                 }
             }
             return $variant;
@@ -216,12 +216,6 @@ class TitleTests {
         // Cache this variant choice.
         $this->chosen_variants[$post->ID] = $variant;
 
-        // Increment the 'test' variable for this variant. (Unless it's a click
-        // conversion, those will get incremented automatically.)
-        if (get_field('conversion', $test_id) != 'click') {
-            $this->increment_test_count($post->ID, $index);
-        }
-
         return $variant;
     }
 
@@ -234,11 +228,12 @@ class TitleTests {
         if (empty($variants) || count($variants) == 0) {
             return false;
         }
-
+        if (empty($test_id)) {
+            return false;
+        }
         if (get_field('conversion', $test_id) == 'click') {
             return false;
         }
-
         return true;
     }
 
@@ -252,16 +247,17 @@ class TitleTests {
         foreach ($this->chosen_variants as $post_id => $variant) {
             $test_id = get_post_meta($post_id, 'split_test_post_id', true);
             $conversion = get_field('conversion', $test_id);
+            $test = [
+                'id' => $test_id,
+                'variant' => $variant['index'],
+                'conversion' => $conversion,
+                'noop' => true,
+            ];
             if ($conversion == 'click') {
-                $tests[] = [
-                    'id' => $test_id,
-                    'variant' => $variant['index'],
-                    'conversion' => 'click',
-                    'noop' => true,
-                    'click_content' => get_field('click_content', $test_id),
-                    'click_selector' => get_field('click_selector', $test_id),
-                ];
+                $test['click_content'] = get_field('click_content', $test_id);
+                $test['click_selector'] = get_field('click_selector', $test_id);
             }
+            $tests[] = $test;
         }
         return $tests;
     }
@@ -407,34 +403,6 @@ END;
         $target_post_id = get_post_meta($split_test_id, 'target_post_id', true);
         $link_template = get_the_permalink($target_post_id, true);
         return str_replace('%postname%', $url_slug, $link_template);
-    }
-
-    /**
-     * Increment the 'test' statistic.
-     *
-     * @return void
-     */
-    function increment_test_count($target_id, $variant_index) {
-        $split_test_id = get_post_meta($target_id, 'split_test_post_id', true);
-        if (!$split_test_id) {
-            return;
-        }
-        $split_test_id = intval($split_test_id);
-        $this->plugin->increment('test', $split_test_id, $variant_index);
-    }
-
-    /**
-     * Increment the 'convert' statistic.
-     *
-     * @return void
-     */
-    function increment_convert_count($target_id, $variant_index) {
-        $split_test_id = get_post_meta($target_id, 'split_test_post_id', true);
-        if (!$split_test_id) {
-            return;
-        }
-        $split_test_id = intval($split_test_id);
-        $this->plugin->increment('convert', $split_test_id, $variant_index);
     }
 
     /**
