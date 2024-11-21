@@ -29,24 +29,24 @@ class DomTests {
     }
 
     /**
-     * Query for DOM variants and select one per test.
+     * Return any active DOM tests.
      *
      * @return array
      */
-    function get_variants() {
-        $tests = get_posts([
+    function get_tests() {
+        $posts = get_posts([
             'post_type' => 'split_test',
             'meta_key' => 'test_type',
             'meta_value' => 'dom'
         ]);
-        $variants = [];
-        foreach ($tests as $post) {
-            $variant = $this->choose_variant($post);
-            if (!empty($variant)) {
-                $variants[$post->ID] = $variant;
+        $tests = [];
+        foreach ($posts as $post) {
+            $test = $this->choose_variant($post);
+            if (!empty($test)) {
+                $tests[] = $test;
             }
         }
-        return $variants;
+        return $tests;
     }
 
     /**
@@ -73,17 +73,16 @@ class DomTests {
             ],
             ... $_variants
         ];
+
+        // Pick a variant at random
         $index = rand(0, count($variants) - 1);
-        $variant = $variants[$index];
-
-        // Don't include the internal 'name' value.
-        unset($variant['name']);
-
-        // Add the index number
-        $variant['index'] = $index;
-
-        // Add the conversion type
-        $variant['conversion'] = get_field('conversion', $post->ID);
+        unset($variants[$index]['name']); // Don't include the internal 'name' value.
+        $variant = [
+            'id' => $post->ID,
+            'variant' => $index,
+            'conversion' => get_field('conversion', $post->ID),
+            ... $variants[$index]
+        ];
 
         // Add click conversion details
         if ($variant['conversion'] == 'click') {
@@ -107,7 +106,8 @@ class DomTests {
         }
 
         foreach ($_variants as $index => $variant) {
-            $_variants[$index]['description'] = count($variant['content']) . ' content changes';
+            $count = empty($variant['content']) ? 0 : count($variant['content']);
+            $_variants[$index]['description'] = "$count content changes";
         }
 
         $variants = [

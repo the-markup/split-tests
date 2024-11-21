@@ -211,12 +211,16 @@ class TitleTests {
         ];
         $index = rand(0, count($variants) - 1);
         $variant = $variants[$index];
+        $variant['index'] = $index;
 
         // Cache this variant choice.
         $this->chosen_variants[$post->ID] = $variant;
 
-        // Increment the 'test' variable for this variant.
-        $this->increment_test_count($post->ID, $index);
+        // Increment the 'test' variable for this variant. (Unless it's a click
+        // conversion, those will get incremented automatically.)
+        if (get_field('conversion', $test_id) != 'click') {
+            $this->increment_test_count($post->ID, $index);
+        }
 
         return $variant;
     }
@@ -231,12 +235,35 @@ class TitleTests {
             return false;
         }
 
-        $conversion = get_field('conversion', $test_id);
-        if ($conversion == 'click') {
+        if (get_field('conversion', $test_id) == 'click') {
             return false;
         }
 
         return true;
+    }
+
+    /**
+     * Returns any active title tests.
+     *
+     * @return array
+     */
+    function get_tests() {
+        $tests = [];
+        foreach ($this->chosen_variants as $post_id => $variant) {
+            $test_id = get_post_meta($post_id, 'split_test_post_id', true);
+            $conversion = get_field('conversion', $test_id);
+            if ($conversion == 'click') {
+                $tests[] = [
+                    'id' => $test_id,
+                    'variant' => $variant['index'],
+                    'conversion' => 'click',
+                    'noop' => true,
+                    'click_content' => get_field('click_content', $test_id),
+                    'click_selector' => get_field('click_selector', $test_id),
+                ];
+            }
+        }
+        return $tests;
     }
 
     /**
