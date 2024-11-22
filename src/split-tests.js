@@ -40,8 +40,8 @@ export default function split_tests_init() {
     if (split_tests.onload) {
         let redirect = split_tests.onload.filter(event => event[0] == 'redirect');
         if (redirect.length > 0) {
-            // This is here to redirect unpublished post title tests back to
-            // the default permalink.
+            // This is here to redirect unpublished title tests back to the
+            // default permalink.
             window.location = redirect[0][1];
             return;
         } else {
@@ -49,13 +49,13 @@ export default function split_tests_init() {
         }
     }
 
-    if (split_tests.dom) {
-        for (let id in split_tests.dom) {
-            const variant = split_tests.dom[id];
-            postEvents([["test", parseInt(id), variant.index]]);
+    if (split_tests.tests) {
+        for (let test of split_tests.tests) {
 
-            if (variant.content) {
-                for (let replacement of variant.content) {
+            postEvents([['test', parseInt(test.id), test.variant]]);
+
+            if (test.content) {
+                for (let replacement of test.content) {
                     let targets = document.querySelectorAll(replacement.selector);
                     for (let target of targets) {
                         if (replacement.search != '' && target.innerText.trim() != replacement.search.trim()) {
@@ -66,8 +66,8 @@ export default function split_tests_init() {
                 }
             }
 
-            if (variant.classes) {
-                for (let change of variant.classes) {
+            if (test.classes) {
+                for (let change of test.classes) {
                     let targets = document.querySelectorAll(change.selector);
                     for (let target of targets) {
                         if (change.change == 'add') {
@@ -79,9 +79,9 @@ export default function split_tests_init() {
                 }
             }
 
-            if (variant.conversion == 'click') {
-                const selector = variant.click_selector;
-                const content = variant.click_content;
+            if (test.conversion == 'click') {
+                const selector = test.click_selector;
+                const content = test.click_content;
                 const targets = document.querySelectorAll(selector);
                 for (let target of targets) {
                     if (content && target.innerText.trim() != content.trim()) {
@@ -89,7 +89,7 @@ export default function split_tests_init() {
                     }
                     target.addEventListener('click', async e => {
                         e.preventDefault();
-                        await postEvents([["convert", parseInt(id), variant.index]]);
+                        await postEvents([["convert", parseInt(test.id), test.variant]]);
                         let href = findHref(e.target);
                         if (href) {
                             window.location = href;
