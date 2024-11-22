@@ -84,6 +84,9 @@ class TitleTests {
         // Add split_test posts whenever you save a post with a split test
         add_action('save_post', [$this, 'save_post'], 10, 2);
 
+        // Keep the split_test post publish time sync'd with the target post
+        add_action('transition_post_status', [$this, 'transition_post_status'], 10, 3);
+
         // Add some JS for Split Test post editor
         add_action('admin_print_scripts', [$this, 'admin_print_scripts']);
     }
@@ -343,11 +346,40 @@ class TitleTests {
         $split_test_post_id = get_post_meta($post_id, 'split_test_post_id', true);
         if (empty($split_test_post_id)) {
             $split_test_post_id = wp_insert_post([
-                'post_type' => 'split_test',
-                'post_title' => "Post $post_id title",
+                'post_type'     => 'split_test',
+                'post_title'    => "Post $post_id title",
+                'post_status'   => $post->post_status,
+                'post_date'     => $post->post_date,
+                'post_date_gmt' => $post->post_date_gmt,
             ]);
             update_post_meta($post_id, 'split_test_post_id', $split_test_post_id);
             update_post_meta($split_test_post_id, 'target_post_id', $post_id);
+        }
+    }
+
+    /**
+     * Handle 'transition_post_status' action to sync post_status with its
+     * corresponding split_test post.
+     *
+     * @return void
+     */
+    function transition_post_status($new_status, $old_status, $post) {
+        if ($post->post_type !== 'post') {
+            return;
+        }
+
+        $split_test_post_id = get_post_meta($post->ID, 'split_test_post_id', true);
+        if (empty($split_test_post_id)) {
+            return;
+        }
+
+        if ($new_status != get_post_status($split_test_post_id)) {
+            wp_update_post([
+                'ID'            => $split_test_post_id,
+                'post_status'   => $post->post_status,
+                'post_date'     => $post->post_date,
+                'post_date_gmt' => $post->post_date_gmt,
+            ]);
         }
     }
 
