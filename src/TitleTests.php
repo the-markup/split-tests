@@ -344,24 +344,10 @@ class TitleTests {
         if (empty($split_test_post_id)) {
             $split_test_post_id = wp_insert_post([
                 'post_type' => 'split_test',
-                'post_title' => "Post $post_id Title",
+                'post_title' => "Post $post_id title",
             ]);
             update_post_meta($post_id, 'split_test_post_id', $split_test_post_id);
             update_post_meta($split_test_post_id, 'target_post_id', $post_id);
-            update_post_meta($split_test_post_id, 'variant_count', count($variants) + 1);
-            for ($i = 0; $i <= count($variants); $i++) {
-                update_post_meta($split_test_post_id, "variant_{$i}_test", 0);
-                update_post_meta($split_test_post_id, "variant_{$i}_convert", 0);
-            }
-        } else {
-            $old_count = get_post_meta($split_test_post_id, 'variant_count', true);
-            $new_count = count($variants);
-            if ($old_count < $new_count) {
-                for ($i = $old_count; $i < $new_count; $i++) {
-                    update_post_meta($split_test_post_id, "variant_{$i}_test", 0);
-                    update_post_meta($split_test_post_id, "variant_{$i}_convert", 0);
-                }
-            }
         }
     }
 
