@@ -20,7 +20,7 @@
                 "title": "Post Title Test",
                 "dom": "DOM Test"
             },
-            "default_value": false,
+            "default_value": "dom",
             "return_format": "value",
             "multiple": 0,
             "allow_null": 0,
@@ -168,15 +168,7 @@
                     "type": "repeater",
                     "instructions": "",
                     "required": 0,
-                    "conditional_logic": [
-                        [
-                            {
-                                "field": "field_668fec3b09224",
-                                "operator": "==",
-                                "value": "dom"
-                            }
-                        ]
-                    ],
+                    "conditional_logic": 0,
                     "wrapper": {
                         "width": "",
                         "class": "",
@@ -251,6 +243,102 @@
                             "prepend": "",
                             "append": "",
                             "parent_repeater": "field_66982606ec8a1"
+                        }
+                    ],
+                    "parent_repeater": "field_66982f55bb940"
+                },
+                {
+                    "key": "field_6740b0595dbdb",
+                    "label": "Change classes",
+                    "name": "classes",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "layout": "block",
+                    "pagination": 0,
+                    "min": 0,
+                    "max": 0,
+                    "collapsed": "",
+                    "button_label": "Add Change",
+                    "rows_per_page": 20,
+                    "sub_fields": [
+                        {
+                            "key": "field_6740b0795dbdc",
+                            "label": "Selector",
+                            "name": "selector",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_6740b0595dbdb"
+                        },
+                        {
+                            "key": "field_6740b0995dbdd",
+                            "label": "Change",
+                            "name": "change",
+                            "aria-label": "",
+                            "type": "radio",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "add": "Add a class",
+                                "remove": "Remove a class"
+                            },
+                            "default_value": "add",
+                            "return_format": "value",
+                            "allow_null": 0,
+                            "other_choice": 0,
+                            "allow_in_bindings": 0,
+                            "layout": "vertical",
+                            "save_other_choice": 0,
+                            "parent_repeater": "field_6740b0595dbdb"
+                        },
+                        {
+                            "key": "field_6740b0c55dbde",
+                            "label": "Class",
+                            "name": "class",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": 0,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "maxlength": "",
+                            "allow_in_bindings": 0,
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": "",
+                            "parent_repeater": "field_6740b0595dbdb"
                         }
                     ],
                     "parent_repeater": "field_66982f55bb940"
