@@ -107,7 +107,16 @@ class DomTests {
         }
 
         foreach ($_variants as $index => $variant) {
-            $_variants[$index]['description'] = count($variant['content']) . ' content changes';
+            // Describe content changes
+            $plural = (! empty($variant['content']) && count($variant['content']) > 1) ? 's' : '';
+            $description = empty($variant['content']) ? '' : count($variant['content']) . ' content change' . $plural;
+
+            // Describe class changes
+            $separator = empty($description) ? '' : ', ';
+            $plural = (! empty($variant['classes']) && count($variant['classes']) > 1) ? 's' : '';
+            $description .= empty($variant['classes']) ? '' : $separator . count($variant['classes']) . ' class change' . $plural;
+
+            $_variants[$index]['description'] = $description;
         }
 
         $variants = [

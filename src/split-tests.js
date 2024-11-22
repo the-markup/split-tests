@@ -58,10 +58,23 @@ export default function split_tests_init() {
                 for (let replacement of variant.content) {
                     let targets = document.querySelectorAll(replacement.selector);
                     for (let target of targets) {
-                        if (replacement.search && target.innerText.trim() != replacement.search.trim()) {
+                        if (replacement.search != '' && target.innerText.trim() != replacement.search.trim()) {
                             continue;
                         }
                         target.innerText = replacement.replace;
+                    }
+                }
+            }
+
+            if (variant.classes) {
+                for (let change of variant.classes) {
+                    let targets = document.querySelectorAll(change.selector);
+                    for (let target of targets) {
+                        if (change.change == 'add') {
+                            target.classList.add(change.class);
+                        } else if (change.change == 'remove') {
+                            target.classList.remove(change.class);
+                        }
                     }
                 }
             }
