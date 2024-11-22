@@ -167,18 +167,12 @@ class TitleTests {
             } else {
                 $variant_index = 0;
             }
-            if (! $this->converted) {
-                $this->converted = true;
-                $variants = get_field('title_variants', $post->ID);
-                $test_id = get_post_meta($post->ID, 'split_test_post_id', true);
-                if ($test_id && get_post_status($test_id) != 'publish') {
-                    // If the test is not published, don't convert and redirect
-                    // to the default variant if it's not the selected one.
-                    if ($variant_index > 0) {
-                        $this->redirect_to_default($post->ID);
-                    }
-                } else if ($this->did_convert($variants, $test_id)) {
-                    $this->plugin->increment('convert', $test_id, $variant_index);
+            $test_id = get_post_meta($post->ID, 'split_test_post_id', true);
+            if ($test_id && get_post_status($test_id) != 'publish') {
+                // If the test is not published, don't convert and redirect
+                // to the default variant if it's not the selected one.
+                if ($variant_index > 0) {
+                    $this->redirect_to_default($post->ID);
                 }
             }
             return $variant;
@@ -220,24 +214,6 @@ class TitleTests {
     }
 
     /**
-     * Returns true of the conditions have been met to convert a title test.
-     *
-     * @return bool
-     */
-    function did_convert($variants, $test_id) {
-        if (empty($variants) || count($variants) == 0) {
-            return false;
-        }
-        if (empty($test_id)) {
-            return false;
-        }
-        if (get_field('conversion', $test_id) == 'click') {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Returns any active title tests.
      *
      * @return array
@@ -247,16 +223,30 @@ class TitleTests {
         foreach ($this->chosen_variants as $post_id => $variant) {
             $test_id = get_post_meta($post_id, 'split_test_post_id', true);
             $conversion = get_field('conversion', $test_id);
+
+            // If we're on a single page and it's a page load conversion, convert it!
+            if ($this->is_single() && $conversion == 'page-load') {
+                $this->plugin->add_onload_event('convert', intval($test_id), $variant['index']);
+                continue;
+            }
+
+            // If this is the wrong context, skip it.
+            if (! $this->plugin->check_context($test_id)) {
+                continue;
+            }
+
             $test = [
-                'id' => $test_id,
+                'id' => intval($test_id),
                 'variant' => $variant['index'],
                 'conversion' => $conversion,
                 'noop' => true,
             ];
+
             if ($conversion == 'click') {
                 $test['click_content'] = get_field('click_content', $test_id);
                 $test['click_selector'] = get_field('click_selector', $test_id);
             }
+
             $tests[] = $test;
         }
         return $tests;
@@ -413,7 +403,11 @@ END;
     function redirect_to_default($target_id) {
         remove_filter('pre_post_link', [$this, 'pre_post_link'], 10, 2);
         $default_permalink = get_permalink($target_id);
-        $this->plugin->redirect($default_permalink);
+        if (apply_filters('split_tests_is_headless', false)) {
+            $this->plugin->add_onload_event('redirect', $default_permalink);
+        } else {
+            wp_redirect($default_permalink);
+        }
     }
 
     /**
@@ -513,7 +507,7 @@ END;
     }
 
     /**
-     * Returns true if we're loading a single post.
+     * Returns true if we're on a single post template.
      *
      * @return bool
      */
@@ -521,4 +515,5 @@ END;
         $is_single = (is_single() && get_post_type() == 'post');
         return apply_filters('split_tests_is_single', $is_single);
     }
+
 }

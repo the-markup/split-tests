@@ -51,7 +51,8 @@ export default function split_tests_init() {
 
     if (split_tests.tests) {
         for (let test of split_tests.tests) {
-            postEvents([["test", parseInt(test.id), test.variant]]);
+
+            postEvents([['test', parseInt(test.id), test.variant]]);
 
             if (test.content) {
                 for (let replacement of test.content) {
@@ -75,7 +76,7 @@ export default function split_tests_init() {
                     }
                     target.addEventListener('click', async e => {
                         e.preventDefault();
-                        await postEvents([["convert", parseInt(id), test.variant]]);
+                        await postEvents([["convert", parseInt(test.id), test.variant]]);
                         let href = findHref(e.target);
                         if (href) {
                             window.location = href;

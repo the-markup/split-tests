@@ -69,11 +69,11 @@ class Assets {
             'localize' => [
                 'endpoint_url' => $endpoint_url,
                 'nonce' => wp_create_nonce('split_tests_event'),
-                'onload' => $this->plugin->onload_events,
                 'tests' => [
                     ... $this->plugin->dom_tests->get_tests(),
                     ... $this->plugin->title_tests->get_tests(),
                 ],
+                'onload' => $this->plugin->onload_events,
             ]
         ];
     }

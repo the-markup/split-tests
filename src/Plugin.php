@@ -88,7 +88,7 @@ class Plugin {
      * @return bool
      */
     function check_context($test_id) {
-        if (get_post_status($test_id) != 'publish') {
+        if (! $test_id || get_post_status($test_id) != 'publish') {
             return false;
         }
         $context = get_field('test_context', $test_id);
@@ -126,25 +126,12 @@ class Plugin {
     }
 
     /**
-     * Set up a front-end REST API increment call.
+     * Appends an onload event that will be sent upon the page loading.
      *
      * @return void
      */
-    function increment($test_or_convert, $split_test_id, $variant_index) {
-        $this->onload_events[] = [$test_or_convert, $split_test_id, $variant_index];
-    }
-
-    /**
-     * Redirect browser to a URL onload.
-     *
-     * @return void
-     */
-    function redirect($url) {
-        if (apply_filters('split_tests_is_headless', false)) {
-            $this->onload_events[] = ['redirect', $url];
-        } else {
-            wp_redirect($url);
-        }
+    function add_onload_event() {
+        $this->onload_events[] = func_get_args();
     }
 
     /**
