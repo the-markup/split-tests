@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "51ed27cf4fd4bcc78a224f7a4b3f81ce",
+    "content-hash": "29be3796bd88b47ee5725e720ae2a3f2",
     "packages": [
         {
             "name": "composer/installers",
@@ -154,16 +154,17 @@
         },
         {
             "name": "wpengine/advanced-custom-fields-pro",
-            "version": "6.3.7",
+            "version": "6.3.11",
             "dist": {
                 "type": "zip",
-                "url": "https://connect.advancedcustomfields.com/v2/plugins/composer_download?p=pro&t=6.3.7"
+                "url": "https://connect.advancedcustomfields.com/v2/plugins/composer_download?s=composer&p=pro&t=6.3.11"
             },
             "require": {
                 "composer/installers": "~1.0 || ~2.0"
             },
             "replace": {
-                "wpackagist-plugin/advanced-custom-fields": "self.version"
+                "wpackagist-plugin/advanced-custom-fields": "self.version",
+                "wpengine/advanced-custom-fields": "self.version"
             },
             "type": "wordpress-plugin"
         }
@@ -171,10 +172,10 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
