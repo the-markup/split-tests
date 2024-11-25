@@ -31,7 +31,7 @@ This repo contains everything you need to get a test environment setup using the
 
 __Developer dependencies__
 
-* [node.js](https://nodejs.org/) (tested on v20)
+* [node.js](https://nodejs.org/) (tested on v22)
 * [nvm](https://github.com/nvm-sh/nvm#readme)
 * [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
