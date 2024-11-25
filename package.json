@@ -1,6 +1,6 @@
 {
   "name": "split-tests",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "main": "Gruntfile.js",
   "author": "The Markup <info@themarkup.org>",
   "scripts": {
