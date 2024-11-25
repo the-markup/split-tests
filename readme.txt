@@ -3,9 +3,9 @@ Contributors: themarkup
 Donate link: https://themarkup.org/donate
 Tags: split-tests
 Requires at least: 4.5
-Tested up to: 6.6.2
+Tested up to: 6.7.1
 Requires PHP: 5.6
-Stable tag: 0.0.7
+Stable tag: 0.0.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,7 +41,7 @@ This repo contains everything you need to get a test environment setup using the
 
 __Developer dependencies__
 
-* [node.js](https://nodejs.org/) (tested on v20)
+* [node.js](https://nodejs.org/) (tested on v22)
 * [nvm](https://github.com/nvm-sh/nvm#readme)
 * [Docker Desktop](https://www.docker.com/products/docker-desktop)
 
