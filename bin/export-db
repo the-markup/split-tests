@@ -11,11 +11,11 @@ docker compose exec web wp db query "DELETE FROM wp_options WHERE option_name = 
 # Remove all wp_split_tests rows
 docker compose exec web wp db query "DELETE FROM wp_split_tests"
 
-# Export database to plugin folder
+# Export database
 docker compose exec web wp db export wp-content/plugins/split-tests/wordpress.sql
 
 # Compress SQL
-docker compose exec web gzip wp-content/plugins/split-tests/wordpress.sql
+gzip wordpress.sql
 
-# Move database to setup folder
+# Move compressed file to setup folder
 mv wordpress.sql.gz setup/db/wordpress.sql.gz
