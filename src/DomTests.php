@@ -50,6 +50,22 @@ class DomTests {
     }
 
     /**
+     * Return CSS changes from any active DOM tests.
+     *
+     * @return string
+     */
+    function get_css() {
+        $tests = $this->get_tests();
+        $css = '';
+        foreach ($tests as $test) {
+            if (!empty($test['css'])) {
+                $css .= $test['css'] . "\n";
+            }
+        }
+        return $css;
+    }
+
+    /**
      * Select a variant from a split_test post.
      *
      * @return array | null
@@ -114,6 +130,14 @@ class DomTests {
             $separator = empty($description) ? '' : ', ';
             $plural = (! empty($variant['classes']) && count($variant['classes']) > 1) ? 's' : '';
             $description .= empty($variant['classes']) ? '' : $separator . count($variant['classes']) . ' class change' . $plural;
+
+            // Describe CSS changes
+            if (!empty($variant['css'])) {
+                if (!empty($description)) {
+                    $description .= ', ';
+                }
+                $description .= 'CSS changes';
+            }
 
             $_variants[$index]['description'] = $description;
         }

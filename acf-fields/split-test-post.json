@@ -180,6 +180,7 @@
                     "collapsed": "",
                     "button_label": "Add Replacement",
                     "rows_per_page": 20,
+                    "parent_repeater": "field_66982f55bb940",
                     "sub_fields": [
                         {
                             "key": "field_66982648ec8a2",
@@ -244,8 +245,7 @@
                             "append": "",
                             "parent_repeater": "field_66982606ec8a1"
                         }
-                    ],
-                    "parent_repeater": "field_66982f55bb940"
+                    ]
                 },
                 {
                     "key": "field_6740b0595dbdb",
@@ -268,6 +268,7 @@
                     "collapsed": "",
                     "button_label": "Add Change",
                     "rows_per_page": 20,
+                    "parent_repeater": "field_66982f55bb940",
                     "sub_fields": [
                         {
                             "key": "field_6740b0795dbdc",
@@ -340,7 +341,28 @@
                             "append": "",
                             "parent_repeater": "field_6740b0595dbdb"
                         }
-                    ],
+                    ]
+                },
+                {
+                    "key": "field_6746107fb3d99",
+                    "label": "Add CSS",
+                    "name": "css",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": 0,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "allow_in_bindings": 0,
+                    "rows": 5,
+                    "placeholder": "",
+                    "new_lines": "",
                     "parent_repeater": "field_66982f55bb940"
                 }
             ]
@@ -360,13 +382,15 @@
                 "id": ""
             },
             "choices": {
+                "click": "Click",
                 "page-load": "Page Load",
-                "click": "Click"
+                "scroll": "Scroll"
             },
             "default_value": false,
             "return_format": "value",
             "multiple": 0,
             "allow_null": 0,
+            "allow_in_bindings": 1,
             "ui": 0,
             "ajax": 0,
             "placeholder": ""
