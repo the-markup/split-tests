@@ -89,7 +89,7 @@ export default function split_tests_init() {
                     }
                     target.addEventListener('click', async e => {
                         e.preventDefault();
-                        await postEvents([["convert", parseInt(test.id), test.variant]]);
+                        await postEvents([['convert', parseInt(test.id), test.variant]]);
                         let href = findHref(e.target);
                         if (href) {
                             window.location = href;
@@ -99,6 +99,27 @@ export default function split_tests_init() {
                     });
                 }
             }
+
+            if (test.conversion == 'scroll') {
+                if (!split_tests.onscroll) {
+                    split_tests.onscroll = [];
+                }
+                split_tests.onscroll.push(test);
+            }
+        }
+
+        if (split_tests.onscroll) {
+            let converted = false;
+            window.addEventListener('scroll', async () => {
+                if (!converted && window.scrollY > window.innerHeight) {
+                    converted = true;
+                    let events = [];
+                    for (let test of split_tests.onscroll) {
+                        events.push(['convert', parseInt(test.id), test.variant]);
+                    }
+                    await postEvents(events);
+                }
+            });
         }
     }
 }
