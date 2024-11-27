@@ -294,20 +294,22 @@ class TitleTests {
         global $wpdb;
 
         // Look up variant URL slugs that match the unknown request slug
-        $post_ids = $wpdb->get_col($wpdb->prepare("
-			SELECT post_id
-			FROM $wpdb->postmeta
-			WHERE meta_key LIKE 'title_variants_%_url_slug'
-			AND meta_value = '%s'
-		", $request_slug), 0);
-		if (empty($post_ids)) {
+        $post_id = $wpdb->get_var($wpdb->prepare("
+			SELECT pm.post_id
+			FROM $wpdb->postmeta AS pm, $wpdb->posts AS p
+			WHERE pm.meta_key LIKE 'title_variants_%_url_slug'
+			  AND pm.meta_value = '%s'
+              AND pm.post_id = p.ID
+              AND p.post_status = 'publish'
+		", $request_slug));
+		if (empty($post_id)) {
 			return [];
 		}
 
         // Replace the 'name' query with a list of IDs that have a variant slug
         $query_vars = $query->query_vars;
         unset($query_vars['name']);
-        $query_vars['post__in'] = $post_ids;
+        $query_vars['p'] = $post_id;
 
         // We don't want this lookup query to be modified by the 'posts_results' filter
         $this->ignore_post_variants = true;
@@ -530,8 +532,7 @@ END;
      * @return bool
      */
     function is_single() {
-        $is_single = (is_single() && get_post_type() == 'post');
-        return apply_filters('split_tests_is_single', $is_single);
+        return apply_filters('split_tests_is_single', is_single());
     }
 
 }
