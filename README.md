@@ -82,6 +82,17 @@ Yes, the tests will work fine with HTML generated behind a CDN, or using other k
 
 ## Changelog ##
 
+### 0.1.1 ###
+- Adds freeform CSS changes to DOM tests.
+- Adds a scroll conversion option.
+- Bugfix for title test post selection.
+
+### 0.1.0 ###
+- Adds class changes to DOM tests.
+- Improves how title tests sync publish status with their associated split test.
+- Bugfix for database migrations.
+- Bugfix for title test conversions.
+
 ### 0.0.9 ###
 - Adds a `split_tests_is_headless` filter that changes how redirects are handled.
 - Bugfix: don't apply unpublished tests to the site.
