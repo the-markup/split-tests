@@ -112,8 +112,11 @@ export default function split_tests_init() {
             let converted = false;
             const scrollStart = window.scrollY;
             window.addEventListener('scroll', async () => {
-                if (!converted && window.scrollY > (startScroll - window.innerHeight))
-                if (!converted && window.scrollY > window.innerHeight) {
+                if (converted) {
+                    return;
+                }
+                const scrollDistance = Math.abs(window.scrollY - scrollStart);
+                if (scrollDistance > window.innerHeight) {
                     converted = true;
                     let events = [];
                     for (let test of split_tests.onscroll) {
