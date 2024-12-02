@@ -31,6 +31,9 @@ class Assets {
         // Enqueue front-end JS
         add_action('wp_enqueue_scripts', [$this, 'wp_enqueue_scripts']);
 
+        // Output any active DOM test CSS
+        add_action('wp_print_scripts', [$this, 'wp_print_scripts']);
+
         // Enqueue admin assets
         add_action('admin_enqueue_scripts', [$this, 'admin_enqueue_scripts']);
     }
@@ -54,6 +57,21 @@ class Assets {
     }
 
     /**
+     * Add CSS style when the scripts are getting output.
+     *
+     * @return void
+     */
+    function wp_print_scripts() {
+        if (is_admin()) {
+            return;
+        }
+        $css = $this->plugin->dom_tests->get_css();
+        if (!empty($css)) {
+            echo "<style>\n$css</style>\n";
+        }
+    }
+
+    /**
      * Return JavaScript details for the front-end.
      *
      * @return array
@@ -74,6 +92,7 @@ class Assets {
                     ... $this->plugin->title_tests->get_tests(),
                 ],
                 'onload' => $this->plugin->onload_events,
+                'css' => $this->plugin->dom_tests->get_css(),
             ]
         ];
     }
