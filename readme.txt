@@ -72,7 +72,7 @@ Yes, we count how many times a test is seen and how many times it converts, but 
 
 = How do you define a conversion? =
 
-There are currently two kinds of conversions: **page loads** and **clicks** (on a specific configured element).
+There are currently three kinds of conversions: **clicks**, **page loads**, and **scrolling**.
 
 = Does the plugin handle front-end caching? =
 
