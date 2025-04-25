@@ -86,6 +86,9 @@ Yes, the tests will work fine with HTML generated behind a CDN, or using other k
 
 == Changelog ==
 
+= 0.1.2 =
+- Updates a number of dependencies.
+
 = 0.1.1 =
 - Adds freeform CSS changes to DOM tests.
 - Adds a scroll conversion option.
