@@ -39,6 +39,17 @@ class Plugin {
         return self::$instance;
     }
 
+    /**
+     * Define properties
+     */
+    public $database;
+    public $post_type;
+    public $assets;
+    public $api;
+    public $cron;
+    public $title_tests;
+    public $dom_tests;
+
 	/**
 	 * Setup sub-classes, tests, and ACF path filter.
 	 *
