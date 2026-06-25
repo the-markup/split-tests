@@ -5,7 +5,7 @@ Tags: split-tests
 Requires at least: 4.5
 Tested up to: 6.7.1
 Requires PHP: 5.6
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,7 +59,7 @@ Once you've built and started the docker containers, you can load up the website
 
 __WordPress admin credentials__
 
-Username: `admin`  
+Username: `admin`
 Password: `password`
 
 You can explore the example tests by clicking on [Split Tests](http://localhost:8080/wp-admin/edit.php?post_type=split_test) in the admin sidebar.

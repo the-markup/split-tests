@@ -1,6 +1,6 @@
 {
   "name": "split-tests",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "Gruntfile.js",
   "author": "The Markup <info@themarkup.org>",
   "scripts": {
@@ -9,7 +9,7 @@
     "grunt": "grunt default"
   },
   "devDependencies": {
-    "@wordpress/scripts": "^30.5.1",
+    "@wordpress/scripts": "^30.27.0",
     "grunt": "~1.6.1",
     "grunt-wp-i18n": "~1.0.3",
     "grunt-wp-readme-to-markdown": "~2.1.0"
